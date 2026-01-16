@@ -1,0 +1,3057 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Tic-Tac-Toe 4x4 - AI Master</title>
+<style>
+  :root {
+    --bg-1: #0a0a0a;
+    --bg-2: #121212;
+    --accent-1: #1a2a6c;
+    --accent-2: #2a1a6c;
+    --blue: #4da6ff;
+    --red: #ff4d4d;
+    --gold: #FFD700;
+    --purple: #9b30ff;
+    --orange: #ff7f00;
+    --green: #00cc66;
+    --cyan: #00ffff;
+    --pink: #ff4da6;
+    --neon-blue: #0066ff;
+    --neon-green: #00ff99;
+    --glass: rgba(255,255,255,0.05);
+    --glass-border: rgba(255,255,255,0.1);
+    --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    height: 100%;
+    background: 
+      radial-gradient(ellipse at 10% 10%, rgba(29,41,72,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse at 90% 90%, rgba(42,26,108,0.2) 0%, transparent 60%),
+      linear-gradient(135deg, #0a0a0a 0%, #121212 50%, #0a0a0a 100%);
+    color: #ffffff;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      linear-gradient(90deg, transparent 49%, rgba(77,166,255,0.03) 50%, transparent 51%),
+      linear-gradient(transparent 49%, rgba(77,166,255,0.03) 50%, transparent 51%);
+    background-size: 50px 50px;
+    z-index: -1;
+    opacity: 0.3;
+  }
+
+  .wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .container {
+    width: min(1300px, 96vw);
+    background: linear-gradient(160deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border-radius: 28px;
+    padding: 30px;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 28px;
+    backdrop-filter: blur(20px);
+    box-shadow: 
+      0 20px 60px rgba(2,6,23,0.8),
+      0 0 0 1px rgba(255,255,255,0.03),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+    border: 1px solid var(--glass-border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+      rgba(77,166,255,0.05) 0%, 
+      rgba(255,77,77,0.03) 50%, 
+      rgba(155,48,255,0.05) 100%);
+    z-index: -1;
+    border-radius: inherit;
+  }
+
+  .home {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: 
+      radial-gradient(ellipse at 50% 0%, rgba(2,6,23,0.95) 0%, rgba(2,6,23,0.98) 100%),
+      url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%234da6ff' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+    z-index: 2000;
+    animation: fadeIn 0.4s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .home-card {
+    width: min(900px, 94vw);
+    padding: 40px;
+    border-radius: 24px;
+    text-align: center;
+    background: linear-gradient(160deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 
+      0 30px 80px rgba(2,6,23,0.9),
+      0 0 0 1px rgba(255,255,255,0.05),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+    animation: slideUp 0.5s cubic-bezier(0.2,0.8,0.2,1);
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(30px) scale(0.98); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+  }
+
+  .home-card h1 {
+    margin: 0 0 20px 0;
+    font-size: 42px;
+    background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 50%, var(--cyan) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 10px 30px rgba(77,166,255,0.2);
+  }
+
+  .home-card p {
+    margin: 0 0 30px 0;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+    font-size: 17px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .mode-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin: 30px 0;
+  }
+
+  .mode-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 30px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.2,0.8,0.2,1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mode-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(77,166,255,0.5), transparent);
+  }
+
+  .mode-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: rgba(77,166,255,0.3);
+    background: rgba(77,166,255,0.05);
+    box-shadow: 
+      0 20px 50px rgba(2,6,23,0.6),
+      0 0 30px rgba(77,166,255,0.1);
+  }
+
+  .mode-card.active {
+    border-color: var(--blue);
+    background: rgba(77,166,255,0.08);
+    box-shadow: 
+      0 0 40px rgba(77,166,255,0.2),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  .mode-card h3 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mode-card p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 20px;
+    text-align: left;
+  }
+
+  .btn {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--neon-blue) 100%);
+    border: none;
+    padding: 14px 28px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    transition: all 0.25s cubic-bezier(0.2,0.8,0.2,1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 160px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.6s;
+  }
+
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+      0 12px 30px rgba(77,166,255,0.4),
+      0 0 20px rgba(77,166,255,0.3);
+  }
+
+  .btn:hover::before {
+    left: 100%;
+  }
+
+  .btn:active {
+    transform: translateY(-1px);
+  }
+
+  .btn.secondary {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+  }
+
+  .btn.secondary:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.2);
+    box-shadow: 
+      0 10px 25px rgba(0,0,0,0.3),
+      0 0 15px rgba(255,255,255,0.1);
+  }
+
+  .board-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  header.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(10px);
+    box-shadow: 
+      0 8px 32px rgba(0,0,0,0.2),
+      inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+
+  .score-panel {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .score {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 22px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.07);
+    min-width: 180px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .score:hover {
+    background: rgba(255,255,255,0.05);
+    transform: translateY(-4px);
+    border-color: rgba(77,166,255,0.3);
+    box-shadow: 
+      0 10px 30px rgba(0,0,0,0.3),
+      0 0 20px rgba(77,166,255,0.1);
+  }
+
+  .score-icon {
+    font-size: 28px;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    box-shadow: 
+      inset 0 1px 0 rgba(255,255,255,0.1),
+      0 4px 20px rgba(0,0,0,0.2);
+  }
+
+  .score-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .score-label {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 6px;
+  }
+
+  .score-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+
+  .controls {
+    display: flex;
+    gap: 12px;
+  }
+
+  .board-container {
+    position: relative;
+    background: rgba(0,0,0,0.25);
+    border-radius: 24px;
+    padding: 30px;
+    border: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    box-shadow: 
+      inset 0 2px 30px rgba(0,0,0,0.5),
+      0 10px 40px rgba(0,0,0,0.4);
+  }
+
+  .board-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(135deg, rgba(77,166,255,0.05) 0%, transparent 50%),
+      linear-gradient(225deg, rgba(255,77,77,0.05) 0%, transparent 50%);
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  .board {
+    width: 100%;
+    aspect-ratio: 1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 18px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .cell {
+    background: linear-gradient(135deg, 
+      rgba(255,255,255,0.08) 0%, 
+      rgba(255,255,255,0.04) 50%, 
+      rgba(0,0,0,0.2) 100%);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    font-weight: 800;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.2,0.8,0.2,1);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 
+      0 10px 30px rgba(0,0,0,0.5),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+    user-select: none;
+    overflow: hidden;
+  }
+
+  .cell::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+      rgba(255,255,255,0.1) 0%, 
+      transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .cell:hover {
+    transform: scale(1.08) translateY(-4px);
+    border-color: rgba(77,166,255,0.4);
+    box-shadow: 
+      0 18px 45px rgba(0,0,0,0.7),
+      0 0 25px rgba(77,166,255,0.2),
+      inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+
+  .cell:hover::before {
+    opacity: 1;
+  }
+
+  .cell.x {
+    color: var(--red);
+    text-shadow: 
+      0 0 20px rgba(255,77,77,0.5),
+      0 4px 30px rgba(255,77,77,0.3);
+  }
+
+  .cell.o {
+    color: var(--blue);
+    text-shadow: 
+      0 0 20px rgba(77,166,255,0.5),
+      0 4px 30px rgba(77,166,255,0.3);
+  }
+
+  .cell.disabled {
+    cursor: not-allowed;
+    transform: none !important;
+    border-color: rgba(255,255,255,0.06);
+  }
+
+  .cell.disabled:hover {
+    box-shadow: 
+      0 10px 30px rgba(0,0,0,0.5),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  .cell.win {
+    animation: winGlow 2s ease-in-out infinite;
+    border-color: var(--gold);
+    box-shadow: 
+      0 0 40px 10px rgba(255,215,0,0.3),
+      0 18px 45px rgba(0,0,0,0.7);
+    position: relative;
+    z-index: 3;
+  }
+
+  @keyframes winGlow {
+    0%, 100% { 
+      box-shadow: 
+        0 0 30px 5px rgba(255,215,0,0.3),
+        0 18px 45px rgba(0,0,0,0.7);
+    }
+    50% { 
+      box-shadow: 
+        0 0 60px 15px rgba(255,215,0,0.5),
+        0 25px 60px rgba(0,0,0,0.8);
+    }
+  }
+
+  .marker {
+    display: inline-block;
+    animation: markerPop 0.4s cubic-bezier(0.2,0.8,0.2,1) forwards;
+    transform-origin: center;
+  }
+
+  @keyframes markerPop {
+    0% { 
+      transform: scale(0.2) rotate(-25deg); 
+      opacity: 0; 
+      filter: blur(10px);
+    }
+    70% { 
+      transform: scale(1.1) rotate(5deg); 
+    }
+    100% { 
+      transform: scale(1) rotate(0deg); 
+      opacity: 1; 
+      filter: blur(0);
+    }
+  }
+
+  .turn-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+    margin-top: 20px;
+    backdrop-filter: blur(10px);
+  }
+
+  .turn-display {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .turn-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    font-size: 24px;
+    box-shadow: 
+      inset 0 1px 0 rgba(255,255,255,0.1),
+      0 6px 25px rgba(0,0,0,0.2);
+  }
+
+  .turn-text {
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+  }
+
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .panel {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 24px;
+    backdrop-filter: blur(10px);
+    box-shadow: 
+      0 10px 30px rgba(0,0,0,0.2),
+      inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .panel h3 {
+    font-size: 20px;
+    color: white;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .panel-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .param-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .param-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    color: rgba(255,255,255,0.9);
+  }
+
+  .param-value {
+    font-weight: 600;
+    color: var(--cyan);
+    min-width: 45px;
+    text-align: right;
+    text-shadow: 0 0 10px rgba(0,255,255,0.3);
+  }
+
+  input[type="range"] {
+    width: 100%;
+    height: 8px;
+    -webkit-appearance: none;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    outline: none;
+    overflow: hidden;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--blue);
+    cursor: pointer;
+    box-shadow: 
+      0 0 20px var(--blue),
+      0 6px 20px rgba(0,0,0,0.4);
+    border: 2px solid white;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px;
+    background: linear-gradient(90deg, 
+      rgba(77,166,255,0.6) 0%, 
+      rgba(155,48,255,0.6) 100%);
+    border-radius: 4px;
+  }
+
+  .ai-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: rgba(77,166,255,0.08);
+    border-radius: 16px;
+    border: 1px solid rgba(77,166,255,0.15);
+    backdrop-filter: blur(10px);
+  }
+
+  .ai-thinking {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--cyan);
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .thinking-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .thinking-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--cyan);
+    animation: thinking 1.6s ease-in-out infinite;
+    box-shadow: 0 0 10px var(--cyan);
+  }
+
+  .thinking-dots span:nth-child(1) { animation-delay: 0s; }
+  .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes thinking {
+    0%, 60%, 100% { 
+      opacity: 0.3; 
+      transform: scale(0.8); 
+    }
+    30% { 
+      opacity: 1; 
+      transform: scale(1.2); 
+    }
+  }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    backdrop-filter: blur(15px);
+    background: 
+      radial-gradient(ellipse at center, rgba(2,6,23,0.85) 0%, rgba(2,6,23,0.95) 100%),
+      url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%234da6ff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  }
+
+  .overlay.active {
+    display: flex;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .result-card {
+    width: min(650px, 92vw);
+    padding: 40px;
+    border-radius: 24px;
+    text-align: center;
+    background: linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    backdrop-filter: blur(40px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 
+      0 40px 100px rgba(2,6,23,0.9),
+      0 0 0 1px rgba(255,255,255,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.15);
+    animation: resultSlide 0.5s cubic-bezier(0.2,0.8,0.2,1);
+  }
+
+  @keyframes resultSlide {
+    from { 
+      transform: translateY(60px) scale(0.95); 
+      opacity: 0; 
+    }
+    to { 
+      transform: translateY(0) scale(1); 
+      opacity: 1; 
+    }
+  }
+
+  .result-icon {
+    font-size: 80px;
+    margin-bottom: 25px;
+    display: inline-block;
+    animation: iconFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 10px 30px rgba(255,215,0,0.3));
+  }
+
+  @keyframes iconFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-15px) rotate(5deg); }
+    75% { transform: translateY(5px) rotate(-5deg); }
+  }
+
+  .result-title {
+    font-size: 44px;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, var(--gold) 0%, #ffcc00 50%, #ffff00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 10px 40px rgba(255,215,0,0.3);
+  }
+
+  .result-message {
+    font-size: 20px;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 30px;
+    line-height: 1.6;
+  }
+
+  .result-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+  }
+
+  .particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 4000;
+    backdrop-filter: blur(20px);
+    background: rgba(2,6,23,0.95);
+  }
+
+  .loading-overlay.active {
+    display: flex;
+  }
+
+  .loading-content {
+    text-align: center;
+    color: white;
+    max-width: 500px;
+    padding: 40px;
+  }
+
+  .loading-spinner {
+    width: 80px;
+    height: 80px;
+    border: 4px solid rgba(255,255,255,0.1);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    margin: 0 auto 30px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .notification {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    padding: 20px 25px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    color: white;
+    display: none;
+    align-items: center;
+    gap: 15px;
+    z-index: 5000;
+    transform: translateX(100px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.2,0.8,0.2,1);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  .notification.active {
+    display: flex;
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  .notification.success {
+    border-left: 5px solid var(--green);
+  }
+
+  .notification.warning {
+    border-left: 5px solid var(--orange);
+  }
+
+  .notification.info {
+    border-left: 5px solid var(--blue);
+  }
+
+  @media (max-width: 1100px) {
+    .container {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+    .mode-selector {
+      grid-template-columns: 1fr;
+    }
+    .score-panel {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 20px;
+      border-radius: 24px;
+    }
+    .home-card {
+      padding: 30px 20px;
+    }
+    .mode-card {
+      padding: 24px;
+    }
+    .score-panel {
+      flex-direction: column;
+      width: 100%;
+    }
+    .score {
+      min-width: auto;
+      width: 100%;
+    }
+    .controls {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .cell {
+      font-size: 48px;
+    }
+    .btn {
+      padding: 12px 20px;
+      min-width: 140px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .cell {
+      font-size: 36px;
+      gap: 12px;
+    }
+    .home-card h1 {
+      font-size: 32px;
+    }
+    .result-title {
+      font-size: 32px;
+    }
+    .result-icon {
+      font-size: 60px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="home" class="home">
+  <div class="home-card">
+    <h1>🎮 Tic-Tac-Toe 4x4 - AI Master</h1>
+    <p>Permainan Tic-Tac-Toe 4x4 dengan kecerdasan buatan yang terus belajar menggunakan Q-Learning. Tonton AI bermain melawan dirinya sendiri atau tantang kemampuanmu melawan AI yang semakin pintar.</p>
+    
+    <div class="mode-selector">
+      <div class="mode-card" data-mode="human" onclick="selectMode('human')">
+        <h3>🤺 Pemain vs AI</h3>
+        <p>Anda bermain sebagai X (Merah) melawan AI sebagai O (Biru). Tantang diri Anda untuk mengalahkan kecerdasan buatan yang terus belajar dari setiap permainan.</p>
+        <button class="btn" onclick="startGame('human')">🎮 Mulai Permainan</button>
+      </div>
+      
+      <div class="mode-card" data-mode="ai" onclick="selectMode('ai')">
+        <h3>🤖 AI vs AI (Spektator)</h3>
+        <p>Mode tontonan. Dua AI akan saling bertanding tanpa henti. Semua hasil permainan akan digunakan untuk pelatihan AI. Skor AI X, AI O, dan Seri akan tercatat.</p>
+        <button class="btn" onclick="startGame('ai')">👁️ Tonton AI Bermain</button>
+      </div>
+    </div>
+    
+    <div style="margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.04); border-radius: 16px; border: 1px solid rgba(255,255,255,0.08);">
+      <p style="font-size: 15px; color: rgba(255,255,255,0.8); margin: 0 0 15px 0;">
+        <strong>📊 Status AI:</strong> <span id="homeAiStatus">Memori AI berisi 0 state yang dipelajari</span>
+      </p>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+        <button class="btn secondary" onclick="exportMemory()">💾 Ekspor Memori AI</button>
+        <button class="btn secondary" onclick="importMemory()">📤 Impor Memori AI</button>
+        <button class="btn secondary" onclick="resetMemory()">🗑️ Reset Memori AI</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap" style="display: none;" id="gameScreen">
+  <div class="container">
+    <div class="board-wrap">
+      <header class="top">
+        <div class="score-panel">
+          <div class="score" id="playerScoreCard">
+            <div class="score-icon">👤</div>
+            <div class="score-info">
+              <div class="score-label">Pemain (X)</div>
+              <div class="score-value" id="playerScore">0</div>
+            </div>
+          </div>
+          
+          <div class="score" id="aiScoreCard">
+            <div class="score-icon">🤖</div>
+            <div class="score-info">
+              <div class="score-label">AI (O)</div>
+              <div class="score-value" id="aiScore">0</div>
+            </div>
+          </div>
+          
+          <div class="score" id="drawScoreCard">
+            <div class="score-icon">🤝</div>
+            <div class="score-info">
+              <div class="score-label">Seri</div>
+              <div class="score-value" id="drawScore">0</div>
+            </div>
+          </div>
+          
+          <div class="score" id="aiXScoreCard" style="display: none;">
+            <div class="score-icon">🤖❌</div>
+            <div class="score-info">
+              <div class="score-label">AI X</div>
+              <div class="score-value" id="aiXScore">0</div>
+            </div>
+          </div>
+          
+          <div class="score" id="aiOScoreCard" style="display: none;">
+            <div class="score-icon">🤖⭕</div>
+            <div class="score-info">
+              <div class="score-label">AI O</div>
+              <div class="score-value" id="aiOScore">0</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="controls">
+          <button class="btn secondary" onclick="resetScores()">🔄 Reset Skor</button>
+          <button class="btn secondary" onclick="requestHome()" id="homeBtn">🏠 Kembali ke Beranda</button>
+        </div>
+      </header>
+      
+      <div class="board-container">
+        <div class="board" id="board"></div>
+      </div>
+      
+      <div class="turn-indicator">
+        <div class="turn-display">
+          <div class="turn-icon" id="currentTurnIcon">❌</div>
+          <div class="turn-text" id="currentTurnText">Giliran: Pemain (X)</div>
+        </div>
+        
+        <div class="ai-status">
+          <div class="ai-thinking" id="aiThinking" style="display: none;">
+            <span>AI Sedang Berpikir</span>
+            <div class="thinking-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <div style="font-size: 15px; color: rgba(255,255,255,0.9);">
+            <span id="qStatesCount">0</span> State Dipelajari
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="side">
+      <div class="panel">
+        <div class="panel-header">
+          <h3>🧠 Kecerdasan AI</h3>
+          <span style="font-size: 13px; color: var(--green); font-weight: 600; padding: 5px 12px; background: rgba(0,204,102,0.1); border-radius: 20px; border: 1px solid rgba(0,204,102,0.2);" id="aiStrength">PEMULA</span>
+        </div>
+        <div class="panel-content">
+          <div style="font-size: 15px; color: rgba(255,255,255,0.8); margin-bottom: 15px; line-height: 1.5;">
+            AI menggunakan Q-Learning dengan strategi agresif. Semua hasil permainan (AI vs AI dan Human vs AI) disimpan dalam memori yang sama.
+          </div>
+          
+          <div class="param-group">
+            <div class="param-label">
+              <span>📊 Eksplorasi (ε)</span>
+              <span class="param-value" id="epsilonValue">0.20</span>
+            </div>
+            <input type="range" id="epsilonSlider" min="0.01" max="0.5" step="0.01" value="0.20" oninput="updateEpsilon(this.value)">
+          </div>
+          
+          <div class="param-group">
+            <div class="param-label">
+              <span>⚡ Kecepatan Belajar (α)</span>
+              <span class="param-value" id="learningRateValue">0.15</span>
+            </div>
+            <input type="range" id="learningRateSlider" min="0.01" max="0.5" step="0.01" value="0.15" oninput="updateLearningRate(this.value)">
+          </div>
+          
+          <div class="param-group">
+            <div class="param-label">
+              <span>🎯 Diskon Hadiah (γ)</span>
+              <span class="param-value" id="discountValue">0.95</span>
+            </div>
+            <input type="range" id="discountSlider" min="0.5" max="0.99" step="0.01" value="0.95" oninput="updateDiscount(this.value)">
+          </div>
+          
+          <div style="display: flex; gap: 12px; margin-top: 10px;">
+            <button class="btn secondary" onclick="trainAI(1000)" style="flex: 1;">🚀 Latih 1K Game</button>
+            <button class="btn secondary" onclick="trainAI(5000)" style="flex: 1;">⚡ Latih 5K Game</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="panel">
+        <h3>⚙️ Pengaturan Game</h3>
+        <div class="panel-content">
+          <div style="display: flex; flex-direction: column; gap: 15px;">
+            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px;">
+              <input type="checkbox" id="aggressiveMode" checked onchange="toggleAggressiveMode()" style="width: 20px; height: 20px;">
+              <span style="font-size: 15px; color: rgba(255,255,255,0.95);">Mode Agresif (AI lebih menyerang)</span>
+            </label>
+            
+            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 12px;">
+              <input type="checkbox" id="depthThinking" onchange="toggleDepthThinking()" style="width: 20px; height: 20px;">
+              <span style="font-size: 15px; color: rgba(255,255,255,0.95);">Pemikiran Mendalam (AI berpikir 2x lebih lama)</span>
+            </label>
+            
+            <div style="margin-top: 5px;">
+              <div style="font-size: 15px; color: rgba(255,255,255,0.9); margin-bottom: 10px;">Pemain Pertama:</div>
+              <div style="display: flex; gap: 12px;">
+                <select id="firstPlayer" style="flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; font-size: 15px; cursor: pointer;">
+                  <option value="player">👤 Pemain (X)</option>
+                  <option value="ai">🤖 AI (O)</option>
+                  <option value="random">🎲 Acak</option>
+                </select>
+              </div>
+            </div>
+            
+            <button class="btn" onclick="newGame()" style="margin-top: 15px;">🔄 Game Baru</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="panel">
+        <h3>📊 Statistik & Kontrol</h3>
+        <div class="panel-content">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div style="background: rgba(255,255,255,0.04); padding: 15px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);">
+              <div style="font-size: 13px; color: rgba(255,255,255,0.8);">Total Game</div>
+              <div style="font-size: 28px; font-weight: 700; margin-top: 5px;" id="totalGames">0</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.04); padding: 15px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);">
+              <div style="font-size: 13px; color: rgba(255,255,255,0.8);">Win Rate AI</div>
+              <div style="font-size: 28px; font-weight: 700; margin-top: 5px;" id="aiWinRate">0%</div>
+            </div>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button class="btn secondary" onclick="toggleAIAutoPlay()" id="aiAutoPlayBtn">
+              ▶️ Mulai AI vs AI
+            </button>
+            
+            <div style="display: flex; gap: 10px;">
+              <button class="btn secondary" style="flex: 1;" onclick="showGameHistory()">📜 Riwayat Game</button>
+              <button class="btn secondary" style="flex: 1;" onclick="showHelp()">❓ Bantuan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<canvas class="particle-canvas" id="particleCanvas"></canvas>
+
+<div class="overlay" id="resultOverlay">
+  <div class="result-card">
+    <div class="result-icon" id="resultIcon">🏆</div>
+    <h1 class="result-title" id="resultTitle">Kemenangan!</h1>
+    <p class="result-message" id="resultMessage">Pemain berhasil mengalahkan AI dengan strategi yang brilian!</p>
+    <div class="result-actions">
+      <button class="btn" onclick="playAgain()">🎮 Main Lagi</button>
+      <button class="btn secondary" onclick="showHome()">🏠 Beranda</button>
+    </div>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-content">
+    <div class="loading-spinner"></div>
+    <h2 style="margin-bottom: 15px; color: white;">Mohon Tunggu...</h2>
+    <p id="loadingMessage" style="color: rgba(255,255,255,0.8);">Sedang menyelesaikan permainan AI...</p>
+  </div>
+</div>
+
+<div class="notification" id="notification">
+  <div id="notificationIcon" style="font-size: 24px;">💾</div>
+  <div>
+    <div id="notificationTitle" style="font-weight: 600; margin-bottom: 5px;">Notifikasi</div>
+    <div id="notificationMessage" style="font-size: 14px; color: rgba(255,255,255,0.9);">Pesan notifikasi</div>
+  </div>
+</div>
+
+<script>
+// ============================================
+// TIC-TAC-TOE 4x4 - AI MASTER v4.0
+// Enhanced AI vs AI mode and aggressive behavior
+// ============================================
+
+// Konfigurasi Game
+const N = 4;
+const CELL_COUNT = N * N;
+const X = 'X';
+const O = 'O';
+const EMPTY = '_';
+
+// Konstanta Q-Learning
+let EPSILON = 0.20;          // Eksplorasi
+let LEARNING_RATE = 0.15;    // Kecepatan belajar
+let DISCOUNT = 0.95;         // Diskon hadiah
+let AGGRESSIVE_MODE = true;  // Mode agresif AI
+let DEEP_THINKING = false;   // Mode berpikir mendalam
+
+// Hadiah untuk Q-Learning (AI lebih agresif)
+const REWARDS = {
+  WIN: 1.0,           // Menang
+  LOSS: -1.0,         // Kalah
+  DRAW: -0.05,        // Seri (sedikit penalty agar AI menghindari seri)
+  CENTER: 0.3,        // Kontrol tengah (lebih tinggi)
+  CORNER: 0.25,       // Kontrol sudut (lebih tinggi)
+  EDGE: 0.1,          // Kontrol tepi
+  BLOCK: 0.4,         // Memblokir lawan
+  FORK: 0.5,          // Membuat fork
+  AGGRESSIVE: 0.4,    // Bonus agresif (lebih tinggi)
+  DEFENSIVE: 0.1,     // Bonus defensif
+  WIN_IN_1: 0.6,      // Langkah menang dalam 1 move
+  LOSS_IN_1: -0.5,    // Langkah kalah dalam 1 move
+  DRAW_FORCED: 0.2    // Memaksa seri saat hampir kalah
+};
+
+// State Game
+let board = Array(CELL_COUNT).fill(EMPTY);
+let qTable = {};                // Tabel Q: { state: { action: qValue } }
+let moveHistory = [];           // Riwayat pergerakan game saat ini
+let gameActive = false;         // Status game aktif
+let currentPlayer = X;          // Pemain saat ini
+let gameMode = null;            // 'human' atau 'ai' (spectator)
+let aiVsAiActive = false;       // Mode AI vs AI aktif
+let pendingHomeRequest = false; // Flag untuk request kembali ke home
+let pendingStopRequest = false; // Flag untuk request stop AI vs AI
+let aiMakingMove = false;       // Flag untuk mencegah AI membuat move bersamaan
+let aiVsAiInterval = null;      // Interval untuk AI vs AI mode
+
+// Statistik
+let stats = {
+  playerWins: 0,
+  aiWins: 0,
+  draws: 0,
+  aiXWins: 0,
+  aiOWins: 0,
+  totalGames: 0,
+  aiThinkingTime: 0,
+  trainingGames: 0,
+  lastMoves: [],
+  winStreak: 0,
+  maxWinStreak: 0,
+  qStatesCount: 0,
+  aiVsAiGames: 0
+};
+
+// Element UI
+const homeScreen = document.getElementById('home');
+const gameScreen = document.getElementById('gameScreen');
+const boardElement = document.getElementById('board');
+const playerScoreElement = document.getElementById('playerScore');
+const aiScoreElement = document.getElementById('aiScore');
+const drawScoreElement = document.getElementById('drawScore');
+const aiXScoreElement = document.getElementById('aiXScore');
+const aiOScoreElement = document.getElementById('aiOScore');
+const qStatesCountElement = document.getElementById('qStatesCount');
+const resultOverlay = document.getElementById('resultOverlay');
+const resultIcon = document.getElementById('resultIcon');
+const resultTitle = document.getElementById('resultTitle');
+const resultMessage = document.getElementById('resultMessage');
+const currentTurnIcon = document.getElementById('currentTurnIcon');
+const currentTurnText = document.getElementById('currentTurnText');
+const aiThinkingElement = document.getElementById('aiThinking');
+const aiStrengthElement = document.getElementById('aiStrength');
+const totalGamesElement = document.getElementById('totalGames');
+const aiWinRateElement = document.getElementById('aiWinRate');
+const homeAiStatusElement = document.getElementById('homeAiStatus');
+const homeBtn = document.getElementById('homeBtn');
+const aiAutoPlayBtn = document.getElementById('aiAutoPlayBtn');
+const loadingOverlay = document.getElementById('loadingOverlay');
+const loadingMessage = document.getElementById('loadingMessage');
+const notification = document.getElementById('notification');
+const notificationIcon = document.getElementById('notificationIcon');
+const notificationTitle = document.getElementById('notificationTitle');
+const notificationMessage = document.getElementById('notificationMessage');
+
+// Canvas untuk efek partikel
+const particleCanvas = document.getElementById('particleCanvas');
+const particleCtx = particleCanvas.getContext('2d');
+let particles = [];
+
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
+function resizeCanvas() {
+  particleCanvas.width = window.innerWidth;
+  particleCanvas.height = window.innerHeight;
+}
+
+function showNotification(type, title, message, duration = 3000) {
+  notification.className = `notification ${type} active`;
+  notificationIcon.textContent = 
+    type === 'success' ? '✅' : 
+    type === 'warning' ? '⚠️' : '💾';
+  notificationTitle.textContent = title;
+  notificationMessage.textContent = message;
+  
+  setTimeout(() => {
+    notification.classList.remove('active');
+  }, duration);
+}
+
+function showLoading(message) {
+  loadingMessage.textContent = message;
+  loadingOverlay.classList.add('active');
+}
+
+function hideLoading() {
+  loadingOverlay.classList.remove('active');
+}
+
+function getStateString(boardState) {
+  return boardState.join('');
+}
+
+function ensureQState(state) {
+  if (!qTable[state]) {
+    qTable[state] = {};
+  }
+}
+
+function getAvailableMoves(boardState) {
+  const moves = [];
+  for (let i = 0; i < CELL_COUNT; i++) {
+    if (boardState[i] === EMPTY) {
+      moves.push(i);
+    }
+  }
+  return moves;
+}
+
+function generateWinningLines() {
+  const lines = [];
+  
+  // Baris
+  for (let r = 0; r < N; r++) {
+    const row = [];
+    for (let c = 0; c < N; c++) {
+      row.push(r * N + c);
+    }
+    lines.push(row);
+  }
+  
+  // Kolom
+  for (let c = 0; c < N; c++) {
+    const col = [];
+    for (let r = 0; r < N; r++) {
+      col.push(r * N + c);
+    }
+    lines.push(col);
+  }
+  
+  // Diagonal utama
+  const diag1 = [];
+  for (let i = 0; i < N; i++) {
+    diag1.push(i * (N + 1));
+  }
+  lines.push(diag1);
+  
+  // Diagonal kedua
+  const diag2 = [];
+  for (let i = 0; i < N; i++) {
+    diag2.push((i + 1) * (N - 1));
+  }
+  lines.push(diag2);
+  
+  return lines;
+}
+
+const WINNING_LINES = generateWinningLines();
+
+function checkWinner(boardState) {
+  // Cek semua garis kemenangan
+  for (const line of WINNING_LINES) {
+    const first = boardState[line[0]];
+    if (first === EMPTY) continue;
+    
+    let win = true;
+    for (let i = 1; i < line.length; i++) {
+      if (boardState[line[i]] !== first) {
+        win = false;
+        break;
+      }
+    }
+    
+    if (win) {
+      return {
+        winner: first,
+        line: line,
+        isDraw: false
+      };
+    }
+  }
+  
+  // Cek apakah seri
+  if (boardState.every(cell => cell !== EMPTY)) {
+    return {
+      winner: null,
+      line: [],
+      isDraw: true
+    };
+  }
+  
+  return {
+    winner: null,
+    line: [],
+    isDraw: false
+  };
+}
+
+function evaluateBoard(boardState, symbol) {
+  let score = 0;
+  const opponent = symbol === X ? O : X;
+  
+  // Evaluasi setiap garis
+  for (const line of WINNING_LINES) {
+    let symbolCount = 0;
+    let opponentCount = 0;
+    let emptyCount = 0;
+    
+    for (const idx of line) {
+      if (boardState[idx] === symbol) symbolCount++;
+      else if (boardState[idx] === opponent) opponentCount++;
+      else emptyCount++;
+    }
+    
+    // Nilai berdasarkan konfigurasi garis
+    if (symbolCount === 4) score += 10000; // Menang
+    else if (symbolCount === 3 && emptyCount === 1) score += 800; // Hampir menang
+    else if (symbolCount === 2 && emptyCount === 2) score += 30; // Potensi 2
+    else if (symbolCount === 1 && emptyCount === 3) score += 2; // Awal
+    
+    // Blokir lawan
+    if (opponentCount === 3 && emptyCount === 1) score += 150; // Harus blokir
+    if (opponentCount === 2 && emptyCount === 2) score += 15; // Potensi blok
+    if (opponentCount === 1 && emptyCount === 3) score += 1; // Awal blok
+  }
+  
+  // Nilai posisi strategis
+  const centerIndices = [5, 6, 9, 10];
+  const cornerIndices = [0, 3, 12, 15];
+  const edgeIndices = [1, 2, 4, 7, 8, 11, 13, 14];
+  
+  for (const idx of centerIndices) {
+    if (boardState[idx] === symbol) score += REWARDS.CENTER * 15;
+    else if (boardState[idx] === opponent) score -= REWARDS.CENTER * 8;
+  }
+  
+  for (const idx of cornerIndices) {
+    if (boardState[idx] === symbol) score += REWARDS.CORNER * 12;
+    else if (boardState[idx] === opponent) score -= REWARDS.CORNER * 6;
+  }
+  
+  for (const idx of edgeIndices) {
+    if (boardState[idx] === symbol) score += REWARDS.EDGE * 3;
+    else if (boardState[idx] === opponent) score -= REWARDS.EDGE * 1.5;
+  }
+  
+  // Bonus untuk fork (serangan ganda)
+  if (hasFork(boardState, symbol)) {
+    score += REWARDS.FORK * 25;
+  }
+  
+  // Penalty jika lawan punya fork
+  if (hasFork(boardState, opponent)) {
+    score -= REWARDS.FORK * 20;
+  }
+  
+  // Bonus agresif
+  if (AGGRESSIVE_MODE) {
+    // Hitung ancaman menang
+    let winThreats = 0;
+    const available = getAvailableMoves(boardState);
+    for (const move of available) {
+      const newBoard = [...boardState];
+      newBoard[move] = symbol;
+      if (checkWinner(newBoard).winner === symbol) {
+        winThreats++;
+      }
+    }
+    score += winThreats * REWARDS.AGGRESSIVE * 10;
+  }
+  
+  return score;
+}
+
+function hasFork(boardState, symbol) {
+  const available = getAvailableMoves(boardState);
+  let forkCount = 0;
+  
+  for (const move of available) {
+    const newBoard = [...boardState];
+    newBoard[move] = symbol;
+    
+    // Cek jika move ini membuat multiple winning threats
+    let threats = 0;
+    for (const nextMove of getAvailableMoves(newBoard)) {
+      const nextBoard = [...newBoard];
+      nextBoard[nextMove] = symbol;
+      if (checkWinner(nextBoard).winner === symbol) {
+        threats++;
+      }
+    }
+    
+    if (threats >= 2) {
+      forkCount++;
+    }
+  }
+  
+  return forkCount > 0;
+}
+
+// ============================================
+// AI Q-LEARNING FUNCTIONS (ENHANCED)
+// ============================================
+
+function findImmediateWin(boardState, symbol) {
+  const available = getAvailableMoves(boardState);
+  
+  for (const move of available) {
+    const newState = [...boardState];
+    newState[move] = symbol;
+    if (checkWinner(newState).winner === symbol) {
+      return move;
+    }
+  }
+  
+  return -1;
+}
+
+function findImmediateBlock(boardState, symbol) {
+  const opponent = symbol === X ? O : X;
+  const available = getAvailableMoves(boardState);
+  
+  for (const move of available) {
+    const newState = [...boardState];
+    newState[move] = opponent;
+    if (checkWinner(newState).winner === opponent) {
+      return move;
+    }
+  }
+  
+  return -1;
+}
+
+function findForkMove(boardState, symbol) {
+  const available = getAvailableMoves(boardState);
+  const opponent = symbol === X ? O : X;
+  
+  for (const move of available) {
+    const newState = [...boardState];
+    newState[move] = symbol;
+    
+    // Hitung berapa banyak ancaman kemenangan yang dibuat
+    let threatCount = 0;
+    for (const nextMove of getAvailableMoves(newState)) {
+      const nextState = [...newState];
+      nextState[nextMove] = symbol;
+      if (checkWinner(nextState).winner === symbol) {
+        threatCount++;
+      }
+    }
+    
+    if (threatCount >= 2) {
+      return move;
+    }
+  }
+  
+  return -1;
+}
+
+function findBlockForkMove(boardState, symbol) {
+  const opponent = symbol === X ? O : X;
+  const available = getAvailableMoves(boardState);
+  
+  // Cari move yang mencegah opponent membuat fork
+  for (const move of available) {
+    const newState = [...boardState];
+    newState[move] = symbol;
+    
+    // Cek apakah opponent masih bisa membuat fork
+    if (findForkMove(newState, opponent) === -1) {
+      return move;
+    }
+  }
+  
+  return -1;
+}
+
+// Fungsi baru: Cari langkah untuk memaksa seri jika hampir kalah
+function findDrawForcingMove(boardState, symbol) {
+  const opponent = symbol === X ? O : X;
+  const available = getAvailableMoves(boardState);
+  
+  // Jika ada banyak empty cell, sulit untuk memaksa seri
+  if (available.length > 8) return -1;
+  
+  // Coba cari langkah yang membuat lawan tidak bisa menang
+  for (const move of available) {
+    const newState = [...boardState];
+    newState[move] = symbol;
+    
+    // Cek apakah setelah langkah ini, lawan masih bisa menang
+    let opponentCanWin = false;
+    const opponentAvailable = getAvailableMoves(newState);
+    
+    for (const oppMove of opponentAvailable) {
+      const oppState = [...newState];
+      oppState[oppMove] = opponent;
+      if (checkWinner(oppState).winner === opponent) {
+        opponentCanWin = true;
+        break;
+      }
+    }
+    
+    // Jika lawan tidak bisa menang setelah langkah ini, ini adalah langkah memaksa seri
+    if (!opponentCanWin) {
+      // Cek apakah kita bisa menang di langkah berikutnya
+      const ourNextMoves = getAvailableMoves(newState);
+      for (const ourMove of ourNextMoves) {
+        const finalState = [...newState];
+        finalState[ourMove] = symbol;
+        if (checkWinner(finalState).winner === symbol) {
+          // Jika kita bisa menang, jangan pilih ini
+          break;
+        }
+      }
+      return move;
+    }
+  }
+  
+  return -1;
+}
+
+function getHeuristicScore(boardState, move, symbol) {
+  const newState = [...boardState];
+  newState[move] = symbol;
+  const opponent = symbol === X ? O : X;
+  
+  let score = 0;
+  
+  // Cek immediate win (prioritas tertinggi)
+  if (checkWinner(newState).winner === symbol) {
+    score += REWARDS.WIN_IN_1 * 100;
+  }
+  
+  // Cek immediate block needed
+  if (findImmediateWin(newState, opponent) !== -1) {
+    score += REWARDS.LOSS_IN_1 * 80;
+  }
+  
+  // Nilai evaluasi board
+  score += evaluateBoard(newState, symbol) * 0.01;
+  
+  // Bonus untuk posisi strategis
+  const centerIndices = [5, 6, 9, 10];
+  const cornerIndices = [0, 3, 12, 15];
+  
+  if (centerIndices.includes(move)) {
+    score += REWARDS.CENTER * 2;
+  } else if (cornerIndices.includes(move)) {
+    score += REWARDS.CORNER * 1.5;
+  }
+  
+  // Bonus agresif
+  if (AGGRESSIVE_MODE) {
+    // Hitung potensi serangan
+    let attackPotential = 0;
+    for (const line of WINNING_LINES) {
+      if (line.includes(move)) {
+        let symInLine = 0;
+        let emptyInLine = 0;
+        for (const idx of line) {
+          if (newState[idx] === symbol) symInLine++;
+          else if (newState[idx] === EMPTY) emptyInLine++;
+        }
+        if (symInLine >= 2 && emptyInLine >= 1) {
+          attackPotential++;
+        }
+      }
+    }
+    score += attackPotential * REWARDS.AGGRESSIVE * 3;
+    
+    // Bonus untuk membuat fork
+    if (hasFork(newState, symbol)) {
+      score += REWARDS.FORK * 10;
+    }
+  }
+  
+  return score;
+}
+
+function chooseAIMove(boardState, symbol) {
+  const stateStr = getStateString(boardState);
+  ensureQState(stateStr);
+  
+  const availableMoves = getAvailableMoves(boardState);
+  
+  if (availableMoves.length === 0) {
+    return -1;
+  }
+  
+  // 1. Cek immediate win (prioritas tertinggi)
+  const winMove = findImmediateWin(boardState, symbol);
+  if (winMove !== -1) {
+    return winMove;
+  }
+  
+  // 2. Cek immediate block (prioritas tinggi)
+  const blockMove = findImmediateBlock(boardState, symbol);
+  if (blockMove !== -1) {
+    return blockMove;
+  }
+  
+  // 3. Cek fork move (strategi agresif)
+  const forkMove = findForkMove(boardState, symbol);
+  if (forkMove !== -1) {
+    return forkMove;
+  }
+  
+  // 4. Cek block fork move (strategi defensif)
+  const blockForkMove = findBlockForkMove(boardState, symbol);
+  if (blockForkMove !== -1) {
+    return blockForkMove;
+  }
+  
+  // 5. Jika hampir kalah, coba paksa seri
+  const drawForcingMove = findDrawForcingMove(boardState, symbol);
+  if (drawForcingMove !== -1) {
+    return drawForcingMove;
+  }
+  
+  // 6. Q-Learning dengan eksplorasi
+  if (Math.random() < EPSILON) {
+    // Eksplorasi: pilih acak dengan preferensi posisi strategis
+    const centerIndices = [5, 6, 9, 10];
+    const cornerIndices = [0, 3, 12, 15];
+    
+    // Prioritaskan center, lalu corner, lalu lainnya
+    const centerMoves = availableMoves.filter(m => centerIndices.includes(m));
+    const cornerMoves = availableMoves.filter(m => cornerIndices.includes(m));
+    
+    if (centerMoves.length > 0) {
+      return centerMoves[Math.floor(Math.random() * centerMoves.length)];
+    } else if (cornerMoves.length > 0) {
+      return cornerMoves[Math.floor(Math.random() * cornerMoves.length)];
+    } else {
+      return availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    }
+  } else {
+    // Eksploitasi: pilih berdasarkan Q-value dan heuristic
+    let bestMove = availableMoves[0];
+    let bestScore = -Infinity;
+    
+    for (const move of availableMoves) {
+      // Inisialisasi Q-value jika belum ada
+      if (qTable[stateStr][move] === undefined) {
+        qTable[stateStr][move] = 0;
+      }
+      
+      // Hitung skor total (Q-value + heuristic)
+      let score = qTable[stateStr][move];
+      score += getHeuristicScore(boardState, move, symbol);
+      
+      // Bonus tambahan untuk mode agresif
+      if (AGGRESSIVE_MODE) {
+        score += Math.random() * 0.1; // Sedikit variasi acak
+      }
+      
+      if (score > bestScore) {
+        bestScore = score;
+        bestMove = move;
+      } else if (score === bestScore && Math.random() < 0.3) {
+        // Kadang-kadang pilih move dengan skor sama untuk variasi
+        bestMove = move;
+      }
+    }
+    
+    return bestMove;
+  }
+}
+
+function updateQValues(result) {
+  // Update Q-values untuk semua agent dalam moveHistory
+  const agents = {};
+  
+  // Kelompokkan move berdasarkan agent
+  for (const move of moveHistory) {
+    if (!agents[move.agent]) {
+      agents[move.agent] = [];
+    }
+    agents[move.agent].push(move);
+  }
+  
+  // Update untuk setiap agent
+  for (const agent in agents) {
+    const moves = agents[agent];
+    const agentSymbol = agent;
+    
+    // Tentukan reward berdasarkan hasil
+    let reward;
+    if (result.isDraw) {
+      reward = REWARDS.DRAW;
+      // Jika AI hampir kalah tetapi berhasil seri, beri reward lebih tinggi
+      if (AGGRESSIVE_MODE) {
+        reward += REWARDS.DRAW_FORCED;
+      }
+    } else if (result.winner === agentSymbol) {
+      reward = REWARDS.WIN;
+    } else {
+      reward = REWARDS.LOSS;
+    }
+    
+    // Update dari move terakhir ke pertama
+    for (let i = moves.length - 1; i >= 0; i--) {
+      const move = moves[i];
+      const state = move.state;
+      const action = move.action;
+      const nextState = move.nextState;
+      
+      ensureQState(state);
+      ensureQState(nextState);
+      
+      const currentQ = qTable[state][action] || 0;
+      
+      // Cari max Q-value untuk next state
+      let maxNextQ = 0;
+      if (qTable[nextState]) {
+        const nextQValues = Object.values(qTable[nextState]);
+        if (nextQValues.length > 0) {
+          maxNextQ = Math.max(...nextQValues);
+        }
+      }
+      
+      // Q-Learning update rule
+      const target = reward + DISCOUNT * maxNextQ;
+      const newQ = currentQ + LEARNING_RATE * (target - currentQ);
+      qTable[state][action] = newQ;
+      
+      // Untuk move sebelumnya, reward = 0 (hanya immediate reward)
+      reward = 0;
+    }
+  }
+}
+
+// ============================================
+// GAME FUNCTIONS
+// ============================================
+
+function initializeBoard() {
+  boardElement.innerHTML = '';
+  
+  for (let i = 0; i < CELL_COUNT; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.dataset.index = i;
+    
+    cell.addEventListener('click', () => handleCellClick(i));
+    
+    boardElement.appendChild(cell);
+  }
+  
+  updateBoard();
+}
+
+function updateBoard() {
+  const cells = boardElement.children;
+  
+  for (let i = 0; i < CELL_COUNT; i++) {
+    const cell = cells[i];
+    const value = board[i];
+    
+    cell.innerHTML = '';
+    cell.classList.remove('x', 'o', 'win', 'disabled');
+    
+    if (value !== EMPTY) {
+      const marker = document.createElement('div');
+      marker.className = 'marker';
+      marker.textContent = value;
+      cell.appendChild(marker);
+      cell.classList.add(value.toLowerCase(), 'disabled');
+    }
+  }
+}
+
+function highlightWinningLine(line) {
+  const cells = boardElement.children;
+  
+  for (const idx of line) {
+    cells[idx].classList.add('win');
+  }
+}
+
+function makeMove(index, symbol) {
+  if (!gameActive || board[index] !== EMPTY) {
+    return false;
+  }
+  
+  // Simpan state sebelum move
+  const prevState = getStateString(board);
+  
+  // Lakukan move
+  board[index] = symbol;
+  
+  // Update tampilan
+  updateBoard();
+  
+  // Tambah ke riwayat
+  moveHistory.push({
+    state: prevState,
+    action: index,
+    nextState: getStateString(board),
+    agent: symbol,
+    timestamp: Date.now()
+  });
+  
+  return true;
+}
+
+function handleCellClick(index) {
+  if (!gameActive || gameMode !== 'human') return;
+  if (currentPlayer !== X) return; // Hanya pemain (X) yang bisa klik
+  if (board[index] !== EMPTY) return;
+  
+  // Pemain melakukan move
+  if (makeMove(index, X)) {
+    // Cek hasil game
+    const result = checkWinner(board);
+    
+    if (result.winner || result.isDraw) {
+      endGame(result);
+    } else {
+      // Giliran AI
+      currentPlayer = O;
+      updateTurnDisplay();
+      
+      // AI berpikir
+      setTimeout(() => {
+        aiMakeMove(O);
+      }, DEEP_THINKING ? 1000 : 400);
+    }
+  }
+}
+
+function aiMakeMove(symbol) {
+  if (!gameActive || currentPlayer !== symbol || aiMakingMove) return;
+  
+  aiMakingMove = true;
+  
+  // Tampilkan indikator berpikir
+  if (gameMode === 'human') {
+    aiThinkingElement.style.display = 'flex';
+  }
+  
+  // Beri delay untuk efek visual (lebih lama di mode deep thinking)
+  setTimeout(() => {
+    if (!gameActive) {
+      aiMakingMove = false;
+      aiThinkingElement.style.display = 'none';
+      return;
+    }
+    
+    const startTime = Date.now();
+    
+    // Pilih move AI
+    const move = chooseAIMove(board, symbol);
+    
+    if (move !== -1 && makeMove(move, symbol)) {
+      const thinkTime = Date.now() - startTime;
+      stats.aiThinkingTime += thinkTime;
+      
+      // Cek hasil game
+      const result = checkWinner(board);
+      
+      if (result.winner || result.isDraw) {
+        endGame(result);
+      } else {
+        // Giliran berikutnya
+        currentPlayer = currentPlayer === X ? O : X;
+        updateTurnDisplay();
+        
+        // Jika mode AI vs AI, lanjut ke move berikutnya
+        if (gameMode === 'ai' && aiVsAiActive) {
+          setTimeout(() => {
+            aiMakingMove = false;
+            aiMakeMove(currentPlayer);
+          }, DEEP_THINKING ? 600 : 200);
+        } else {
+          aiMakingMove = false;
+        }
+      }
+    } else {
+      // Jika move tidak valid, cek apakah game seri
+      const result = checkWinner(board);
+      if (result.isDraw) {
+        endGame(result);
+      }
+      aiMakingMove = false;
+    }
+    
+    // Sembunyikan indikator berpikir
+    aiThinkingElement.style.display = 'none';
+    
+  }, DEEP_THINKING ? 800 : 200);
+}
+
+function endGame(result) {
+  gameActive = false;
+  aiMakingMove = false;
+  
+  // Tandai garis pemenang jika ada
+  if (result.line.length > 0) {
+    highlightWinningLine(result.line);
+    
+    // Efek partikel untuk kemenangan
+    if (gameMode === 'human') {
+      createParticles(result.winner === X ? 'win' : 'lose');
+    }
+  }
+  
+  // Update statistik
+  stats.totalGames++;
+  
+  if (gameMode === 'ai' && aiVsAiActive) {
+    stats.aiVsAiGames++;
+  }
+  
+  stats.lastMoves.push({
+    mode: gameMode,
+    winner: result.winner,
+    moves: moveHistory.length,
+    timestamp: Date.now()
+  });
+  
+  if (stats.lastMoves.length > 20) {
+    stats.lastMoves.shift();
+  }
+  
+  // Update Q-values berdasarkan hasil
+  updateQValues(result);
+  
+  // Update skor berdasarkan mode
+  if (result.isDraw) {
+    // Seri
+    stats.draws++;
+    
+    if (gameMode === 'human') {
+      showResult('🤝 Game Seri', 'Permainan berakhir dengan hasil seri.', 'Seri');
+    } else if (gameMode === 'ai') {
+      // Tidak ada update score untuk AI vs AI seri (sudah dihitung di draws)
+    }
+  } else if (result.winner === X) {
+    // X menang
+    if (gameMode === 'human') {
+      stats.playerWins++;
+      stats.winStreak++;
+      if (stats.winStreak > stats.maxWinStreak) {
+        stats.maxWinStreak = stats.winStreak;
+      }
+      showResult('🏆 Pemain Menang!', 'Anda berhasil mengalahkan AI!', 'Win');
+    } else if (gameMode === 'ai') {
+      stats.aiXWins++;
+    }
+  } else if (result.winner === O) {
+    // O menang
+    if (gameMode === 'human') {
+      stats.aiWins++;
+      stats.winStreak = 0;
+      showResult('🤖 AI Menang', 'AI berhasil mengalahkan Anda. Coba lagi!', 'Lose');
+    } else if (gameMode === 'ai') {
+      stats.aiOWins++;
+    }
+  }
+  
+  // Update skor tampilan
+  updateScores();
+  
+  // Simpan memori AI
+  saveMemory();
+  saveScores();
+  
+  // Jika mode AI vs AI aktif, lanjut ke game berikutnya
+  if (gameMode === 'ai' && aiVsAiActive) {
+    setTimeout(() => {
+      // Cek jika ada request untuk berhenti atau kembali ke home
+      if (pendingHomeRequest) {
+        pendingHomeRequest = false;
+        aiMakingMove = false;
+        showHome();
+        return;
+      }
+      
+      if (pendingStopRequest) {
+        pendingStopRequest = false;
+        stopAIAutoPlay();
+        return;
+      }
+      
+      // Reset dan mulai game baru
+      resetBoard();
+      newGame();
+      
+      // Mulai game AI vs AI berikutnya
+      setTimeout(() => {
+        if (gameMode === 'ai' && aiVsAiActive && gameActive) {
+          aiMakeMove(currentPlayer);
+        }
+      }, 300);
+    }, 800);
+  }
+}
+
+function showResult(title, message, type) {
+  resultIcon.textContent = type === 'Win' ? '🏆' : type === 'Lose' ? '🤖' : '🤝';
+  resultTitle.textContent = title;
+  resultMessage.textContent = message;
+  resultOverlay.classList.add('active');
+}
+
+function playAgain() {
+  resultOverlay.classList.remove('active');
+  resetBoard();
+  newGame();
+}
+
+function resetBoard() {
+  board = Array(CELL_COUNT).fill(EMPTY);
+  moveHistory = [];
+  updateBoard();
+}
+
+function newGame() {
+  resetBoard();
+  
+  // Tentukan pemain pertama
+  const firstPlayerSelect = document.getElementById('firstPlayer');
+  const firstPlayer = firstPlayerSelect.value;
+  
+  if (firstPlayer === 'player') {
+    currentPlayer = X;
+  } else if (firstPlayer === 'ai') {
+    currentPlayer = O;
+  } else {
+    // Acak
+    currentPlayer = Math.random() < 0.5 ? X : O;
+  }
+  
+  gameActive = true;
+  aiMakingMove = false;
+  updateTurnDisplay();
+  
+  // Jika AI mulai duluan
+  if (gameMode === 'human' && currentPlayer === O) {
+    setTimeout(() => {
+      aiMakeMove(O);
+    }, 800);
+  } else if (gameMode === 'ai' && aiVsAiActive) {
+    // AI vs AI mode - mulai setelah delay
+    setTimeout(() => {
+      aiMakeMove(currentPlayer);
+    }, 500);
+  }
+}
+
+function updateTurnDisplay() {
+  if (gameMode === 'human') {
+    if (currentPlayer === X) {
+      currentTurnIcon.textContent = '❌';
+      currentTurnText.textContent = 'Giliran: Pemain (X)';
+    } else {
+      currentTurnIcon.textContent = '⭕';
+      currentTurnText.textContent = 'Giliran: AI (O)';
+    }
+  } else if (gameMode === 'ai') {
+    if (currentPlayer === X) {
+      currentTurnIcon.textContent = '🤖❌';
+      currentTurnText.textContent = 'Giliran: AI (X)';
+    } else {
+      currentTurnIcon.textContent = '🤖⭕';
+      currentTurnText.textContent = 'Giliran: AI (O)';
+    }
+  }
+}
+
+function updateScores() {
+  playerScoreElement.textContent = stats.playerWins;
+  aiScoreElement.textContent = stats.aiWins;
+  drawScoreElement.textContent = stats.draws;
+  aiXScoreElement.textContent = stats.aiXWins;
+  aiOScoreElement.textContent = stats.aiOWins;
+  totalGamesElement.textContent = stats.totalGames;
+  
+  // Hitung win rate AI
+  const totalAIWins = stats.aiWins + stats.aiXWins + stats.aiOWins;
+  const totalAIGames = stats.totalGames - stats.draws;
+  const aiWinRate = totalAIGames > 0 ? Math.round((totalAIWins / totalAIGames) * 100) : 0;
+  aiWinRateElement.textContent = aiWinRate + '%';
+  
+  // Update kekuatan AI berdasarkan win rate
+  if (aiWinRate >= 85) {
+    aiStrengthElement.textContent = 'MASTER';
+    aiStrengthElement.style.color = 'var(--gold)';
+    aiStrengthElement.style.background = 'rgba(255,215,0,0.1)';
+    aiStrengthElement.style.borderColor = 'rgba(255,215,0,0.2)';
+  } else if (aiWinRate >= 70) {
+    aiStrengthElement.textContent = 'AHLI';
+    aiStrengthElement.style.color = 'var(--purple)';
+    aiStrengthElement.style.background = 'rgba(155,48,255,0.1)';
+    aiStrengthElement.style.borderColor = 'rgba(155,48,255,0.2)';
+  } else if (aiWinRate >= 50) {
+    aiStrengthElement.textContent = 'MENENGAH';
+    aiStrengthElement.style.color = 'var(--blue)';
+    aiStrengthElement.style.background = 'rgba(77,166,255,0.1)';
+    aiStrengthElement.style.borderColor = 'rgba(77,166,255,0.2)';
+  } else {
+    aiStrengthElement.textContent = 'PEMULA';
+    aiStrengthElement.style.color = 'var(--green)';
+    aiStrengthElement.style.background = 'rgba(0,204,102,0.1)';
+    aiStrengthElement.style.borderColor = 'rgba(0,204,102,0.2)';
+  }
+  
+  // Update jumlah state yang dipelajari
+  stats.qStatesCount = Object.keys(qTable).length;
+  qStatesCountElement.textContent = stats.qStatesCount.toLocaleString();
+  
+  // Update status di home
+  homeAiStatusElement.textContent = `Memori AI berisi ${stats.qStatesCount.toLocaleString()} state yang dipelajari dari ${stats.totalGames} game`;
+}
+
+// ============================================
+// UI & MODE FUNCTIONS
+// ============================================
+
+function selectMode(mode) {
+  // Hapus seleksi sebelumnya
+  document.querySelectorAll('.mode-card').forEach(card => {
+    card.classList.remove('active');
+  });
+  
+  // Tambah seleksi baru
+  document.querySelector(`.mode-card[data-mode="${mode}"]`).classList.add('active');
+}
+
+function startGame(mode) {
+  gameMode = mode;
+  
+  // Sembunyikan home, tampilkan game
+  homeScreen.style.display = 'none';
+  gameScreen.style.display = 'flex';
+  
+  // Update tampilan berdasarkan mode
+  if (mode === 'human') {
+    document.getElementById('playerScoreCard').style.display = 'flex';
+    document.getElementById('aiScoreCard').style.display = 'flex';
+    document.getElementById('drawScoreCard').style.display = 'flex';
+    document.getElementById('aiXScoreCard').style.display = 'none';
+    document.getElementById('aiOScoreCard').style.display = 'none';
+    aiAutoPlayBtn.style.display = 'none';
+  } else if (mode === 'ai') {
+    document.getElementById('playerScoreCard').style.display = 'none';
+    document.getElementById('aiScoreCard').style.display = 'none';
+    document.getElementById('drawScoreCard').style.display = 'flex';
+    document.getElementById('aiXScoreCard').style.display = 'flex';
+    document.getElementById('aiOScoreCard').style.display = 'flex';
+    aiAutoPlayBtn.style.display = 'block';
+  }
+  
+  // Reset dan mulai game baru
+  resetBoard();
+  newGame();
+}
+
+function requestHome() {
+  if (gameMode === 'ai' && aiVsAiActive) {
+    // Mode AI vs AI aktif, tunggu game selesai
+    if (gameActive) {
+      pendingHomeRequest = true;
+      showLoading('Menunggu AI menyelesaikan permainan...');
+      homeBtn.textContent = '⏳ Menunggu...';
+      homeBtn.disabled = true;
+      showNotification('warning', 'Mohon Tunggu', 'Menunggu AI menyelesaikan permainan...');
+    } else {
+      showHome();
+    }
+  } else {
+    showHome();
+  }
+}
+
+function showHome() {
+  // Hentikan AI vs AI jika aktif
+  if (aiVsAiActive) {
+    stopAIAutoPlay();
+  }
+  
+  // Reset state
+  pendingHomeRequest = false;
+  pendingStopRequest = false;
+  gameActive = false;
+  aiMakingMove = false;
+  
+  // Reset tombol home
+  homeBtn.textContent = '🏠 Kembali ke Beranda';
+  homeBtn.disabled = false;
+  
+  // Tampilkan home, sembunyikan game
+  gameScreen.style.display = 'none';
+  homeScreen.style.display = 'flex';
+  
+  // Update status AI
+  updateScores();
+  hideLoading();
+}
+
+function resetScores() {
+  if (confirm('Reset semua skor dan statistik ke default?')) {
+    stats = {
+      playerWins: 0,
+      aiWins: 0,
+      draws: 0,
+      aiXWins: 0,
+      aiOWins: 0,
+      totalGames: 0,
+      aiThinkingTime: 0,
+      trainingGames: 0,
+      lastMoves: [],
+      winStreak: 0,
+      maxWinStreak: 0,
+      qStatesCount: stats.qStatesCount,
+      aiVsAiGames: 0
+    };
+    
+    updateScores();
+    saveScores();
+    showNotification('success', 'Reset Berhasil', 'Semua skor telah direset ke default.');
+  }
+}
+
+function toggleAIAutoPlay() {
+  if (!aiVsAiActive) {
+    // Mulai AI vs AI
+    aiVsAiActive = true;
+    aiAutoPlayBtn.textContent = '⏸️ Hentikan AI vs AI';
+    aiAutoPlayBtn.style.background = 'linear-gradient(135deg, var(--red) 0%, #ff3333 100%)';
+    
+    // Mulai game baru jika belum ada
+    if (!gameActive) {
+      newGame();
+    }
+    
+    // Pastikan AI yang akan bergerik
+    if (gameActive && !aiMakingMove) {
+      setTimeout(() => {
+        aiMakeMove(currentPlayer);
+      }, 500);
+    }
+    
+    showNotification('info', 'AI vs AI Dimulai', 'Dua AI sekarang saling bertanding.');
+  } else {
+    // Hentikan AI vs AI
+    stopAIAutoPlay();
+  }
+}
+
+function stopAIAutoPlay() {
+  if (aiVsAiActive) {
+    pendingStopRequest = true;
+    
+    if (gameActive && aiMakingMove) {
+      showLoading('Menghentikan AI...');
+      aiAutoPlayBtn.textContent = '⏳ Menghentikan...';
+      aiAutoPlayBtn.disabled = true;
+      showNotification('warning', 'Mohon Tunggu', 'Menunggu AI menyelesaikan langkah...');
+    } else {
+      finishStopAIAutoPlay();
+    }
+  }
+}
+
+function finishStopAIAutoPlay() {
+  aiVsAiActive = false;
+  aiAutoPlayBtn.textContent = '▶️ Mulai AI vs AI';
+  aiAutoPlayBtn.style.background = 'rgba(255,255,255,0.07)';
+  aiAutoPlayBtn.disabled = false;
+  pendingStopRequest = false;
+  hideLoading();
+  showNotification('info', 'AI vs AI Dihentikan', 'Pertandingan AI vs AI telah dihentikan.');
+}
+
+function trainAI(games) {
+  if (games > 1000) {
+    showLoading(`Melatih AI dengan ${games} permainan...`);
+  }
+  
+  // Simpan state game saat ini
+  const savedGameState = {
+    board: [...board],
+    gameActive: gameActive,
+    currentPlayer: currentPlayer,
+    moveHistory: [...moveHistory],
+    aiVsAiActive: aiVsAiActive
+  };
+  
+  // Training loop
+  let gamesPlayed = 0;
+  
+  function trainStep() {
+    if (gamesPlayed >= games) {
+      // Training selesai
+      if (games > 1000) {
+        hideLoading();
+      }
+      
+      // Kembalikan state game
+      board = savedGameState.board;
+      gameActive = savedGameState.gameActive;
+      currentPlayer = savedGameState.currentPlayer;
+      moveHistory = savedGameState.moveHistory;
+      aiVsAiActive = savedGameState.aiVsAiActive;
+      
+      updateBoard();
+      updateTurnDisplay();
+      updateScores();
+      
+      showNotification('success', 'Training Selesai', `${games} permainan training telah diselesaikan.`);
+      return;
+    }
+    
+    // Mainkan satu game training
+    const trainingBoard = Array(CELL_COUNT).fill(EMPTY);
+    const trainingHistory = [];
+    let trainingCurrentPlayer = Math.random() < 0.5 ? X : O;
+    let trainingGameActive = true;
+    
+    // Mainkan sampai game selesai
+    while (trainingGameActive) {
+      // Pilih move untuk pemain saat ini
+      const move = chooseAIMove(trainingBoard, trainingCurrentPlayer);
+      
+      if (move === -1) break;
+      
+      // Simpan state sebelum move
+      const prevState = getStateString(trainingBoard);
+      
+      // Lakukan move
+      trainingBoard[move] = trainingCurrentPlayer;
+      
+      // Simpan dalam history
+      trainingHistory.push({
+        state: prevState,
+        action: move,
+        nextState: getStateString(trainingBoard),
+        agent: trainingCurrentPlayer,
+        timestamp: Date.now()
+      });
+      
+      // Cek hasil
+      const result = checkWinner(trainingBoard);
+      
+      if (result.winner || result.isDraw) {
+        trainingGameActive = false;
+        
+        // Update Q-values
+        const agents = {};
+        
+        // Kelompokkan move berdasarkan agent
+        for (const move of trainingHistory) {
+          if (!agents[move.agent]) {
+            agents[move.agent] = [];
+          }
+          agents[move.agent].push(move);
+        }
+        
+        // Update untuk setiap agent
+        for (const agent in agents) {
+          const moves = agents[agent];
+          const agentSymbol = agent;
+          
+          // Tentukan reward
+          let reward;
+          if (result.isDraw) {
+            reward = REWARDS.DRAW;
+          } else if (result.winner === agentSymbol) {
+            reward = REWARDS.WIN;
+          } else {
+            reward = REWARDS.LOSS;
+          }
+          
+          // Update dari move terakhir ke pertama
+          for (let i = moves.length - 1; i >= 0; i--) {
+            const move = moves[i];
+            const state = move.state;
+            const action = move.action;
+            const nextState = move.nextState;
+            
+            ensureQState(state);
+            ensureQState(nextState);
+            
+            const currentQ = qTable[state][action] || 0;
+            
+            // Cari max Q-value untuk next state
+            let maxNextQ = 0;
+            if (qTable[nextState]) {
+              const nextQValues = Object.values(qTable[nextState]);
+              if (nextQValues.length > 0) {
+                maxNextQ = Math.max(...nextQValues);
+              }
+            }
+            
+            // Q-Learning update rule
+            const target = reward + DISCOUNT * maxNextQ;
+            const newQ = currentQ + LEARNING_RATE * (target - currentQ);
+            qTable[state][action] = newQ;
+            
+            // Untuk move sebelumnya, reward = 0
+            reward = 0;
+          }
+        }
+        
+        // Update statistik
+        stats.trainingGames++;
+        gamesPlayed++;
+        
+        // Update progress untuk games besar
+        if (games > 1000 && gamesPlayed % 100 === 0) {
+          loadingMessage.textContent = `Melatih AI: ${gamesPlayed}/${games} permainan...`;
+        }
+      } else {
+        // Ganti giliran
+        trainingCurrentPlayer = trainingCurrentPlayer === X ? O : X;
+      }
+    }
+    
+    // Lanjutkan training
+    setTimeout(trainStep, 0);
+  }
+  
+  // Mulai training
+  setTimeout(trainStep, 0);
+}
+
+function updateEpsilon(value) {
+  EPSILON = parseFloat(value);
+  document.getElementById('epsilonValue').textContent = value;
+}
+
+function updateLearningRate(value) {
+  LEARNING_RATE = parseFloat(value);
+  document.getElementById('learningRateValue').textContent = value;
+}
+
+function updateDiscount(value) {
+  DISCOUNT = parseFloat(value);
+  document.getElementById('discountValue').textContent = value;
+}
+
+function toggleAggressiveMode() {
+  AGGRESSIVE_MODE = document.getElementById('aggressiveMode').checked;
+  showNotification('info', 'Mode Agresif', AGGRESSIVE_MODE ? 'Aktif' : 'Nonaktif');
+}
+
+function toggleDepthThinking() {
+  DEEP_THINKING = document.getElementById('depthThinking').checked;
+  showNotification('info', 'Pemikiran Mendalam', DEEP_THINKING ? 'Aktif' : 'Nonaktif');
+}
+
+function showGameHistory() {
+  let historyText = `📊 Riwayat Permainan Terakhir:\n\n`;
+  
+  if (stats.lastMoves.length === 0) {
+    historyText += `Belum ada riwayat permainan.\n`;
+  } else {
+    for (let i = 0; i < Math.min(5, stats.lastMoves.length); i++) {
+      const game = stats.lastMoves[stats.lastMoves.length - 1 - i];
+      const timeAgo = Math.round((Date.now() - game.timestamp) / 60000);
+      let result;
+      
+      if (game.winner === X) {
+        result = game.mode === 'human' ? 'Pemain Menang' : 'AI X Menang';
+      } else if (game.winner === O) {
+        result = game.mode === 'human' ? 'AI Menang' : 'AI O Menang';
+      } else {
+        result = 'Seri';
+      }
+      
+      historyText += `${i + 1}. ${result} (${game.moves} langkah, ${timeAgo} menit lalu)\n`;
+    }
+  }
+  
+  historyText += `\n📈 Statistik:\n`;
+  historyText += `Total Game: ${stats.totalGames}\n`;
+  historyText += `Win Streak Terbaik: ${stats.maxWinStreak}\n`;
+  historyText += `State Dipelajari: ${Object.keys(qTable).length.toLocaleString()}\n`;
+  historyText += `Game AI vs AI: ${stats.aiVsAiGames}`;
+  
+  alert(historyText);
+}
+
+function showHelp() {
+  const helpText = `
+🎮 TIC-TAC-TOE 4x4 - AI Master
+
+📖 CARA BERMAIN:
+- Tujuan: Buat 4 simbol berurutan (baris, kolom, atau diagonal)
+- Mode Pemain vs AI: Anda bermain sebagai X (Merah), AI sebagai O (Biru)
+- Mode AI vs AI: Tonton dua AI saling bertanding
+
+⚙️ PENGATURAN AI:
+- Eksplorasi (ε): Seberapa sering AI mencoba langkah acak
+- Kecepatan Belajar (α): Seberapa cepat AI belajar dari pengalaman
+- Diskon Hadiah (γ): Pentingnya reward di masa depan
+
+🎯 TIPS:
+1. Coba kontrol pusat papan (kotak 5,6,9,10)
+2. Perhatikan pola ganda (fork) dari lawan
+3. Latih AI dengan banyak game untuk meningkatkan skill-nya
+4. Gunakan mode agresif untuk AI yang lebih menyerang
+5. AI akan berusaha seri jika hampir kalah
+
+💾 FITUR:
+- AI belajar dengan Q-Learning
+- Memori dapat diimpor/ekspor
+- Statistik rinci dan riwayat game
+- Efek visual yang menarik
+
+Selamat bermain! 🚀
+  `;
+  
+  alert(helpText);
+}
+
+// ============================================
+// MEMORY & STORAGE FUNCTIONS (IMPROVED)
+// ============================================
+
+function saveMemory() {
+  try {
+    // Kompres qTable untuk menghemat space
+    const compressedQTable = {};
+    for (const state in qTable) {
+      if (Object.keys(qTable[state]).length > 0) {
+        compressedQTable[state] = qTable[state];
+      }
+    }
+    
+    const memoryData = {
+      qTable: compressedQTable,
+      stats: stats,
+      timestamp: Date.now(),
+      version: '4.0'
+    };
+    
+    const dataString = JSON.stringify(memoryData);
+    
+    // Cek ukuran data
+    if (dataString.length > 5000000) { // 5MB
+      showNotification('warning', 'Peringatan', 'Memori AI terlalu besar, beberapa data mungkin tidak disimpan.');
+      
+      // Hapus state yang jarang digunakan
+      const states = Object.keys(compressedQTable);
+      if (states.length > 10000) {
+        // Simpan hanya state yang sering digunakan
+        const sortedStates = states.sort((a, b) => {
+          return Object.keys(compressedQTable[b]).length - Object.keys(compressedQTable[a]).length;
+        });
+        
+        const limitedQTable = {};
+        for (let i = 0; i < Math.min(8000, sortedStates.length); i++) {
+          limitedQTable[sortedStates[i]] = compressedQTable[sortedStates[i]];
+        }
+        
+        memoryData.qTable = limitedQTable;
+      }
+    }
+    
+    localStorage.setItem('ticTacToe4x4_ai_memory_v4', JSON.stringify(memoryData));
+    console.log('Memori AI disimpan:', Object.keys(memoryData.qTable).length, 'states');
+  } catch (e) {
+    console.error('Gagal menyimpan memori:', e);
+    showNotification('warning', 'Penyimpanan Gagal', 'Gagal menyimpan memori AI ke penyimpanan lokal.');
+  }
+}
+
+function loadMemory() {
+  try {
+    // Coba load versi baru terlebih dahulu
+    let saved = localStorage.getItem('ticTacToe4x4_ai_memory_v4');
+    
+    // Jika tidak ada, coba load versi lama
+    if (!saved) {
+      saved = localStorage.getItem('ticTacToe4x4_ai_memory');
+    }
+    
+    if (saved) {
+      const memoryData = JSON.parse(saved);
+      
+      // Load Q-table
+      if (memoryData.qTable) {
+        qTable = memoryData.qTable;
+      }
+      
+      // Load stats (gabungkan dengan statistik default)
+      if (memoryData.stats) {
+        stats = {
+          ...stats,
+          ...memoryData.stats,
+          // Pastikan properti yang diperlukan ada
+          lastMoves: memoryData.stats.lastMoves || [],
+          winStreak: memoryData.stats.winStreak || 0,
+          maxWinStreak: memoryData.stats.maxWinStreak || 0,
+          qStatesCount: Object.keys(qTable).length,
+          aiVsAiGames: memoryData.stats.aiVsAiGames || 0
+        };
+      }
+      
+      console.log('Memori AI dimuat:', Object.keys(qTable).length, 'states');
+      return true;
+    }
+  } catch (e) {
+    console.error('Gagal memuat memori:', e);
+    showNotification('warning', 'Memuat Gagal', 'Gagal memuat memori AI dari penyimpanan lokal.');
+  }
+  
+  return false;
+}
+
+function saveScores() {
+  try {
+    localStorage.setItem('ticTacToe4x4_scores_v4', JSON.stringify(stats));
+  } catch (e) {
+    console.error('Gagal menyimpan skor:', e);
+  }
+}
+
+function loadScores() {
+  try {
+    // Coba load versi baru terlebih dahulu
+    let saved = localStorage.getItem('ticTacToe4x4_scores_v4');
+    
+    // Jika tidak ada, coba load versi lama
+    if (!saved) {
+      saved = localStorage.getItem('ticTacToe4x4_scores');
+    }
+    
+    if (saved) {
+      const savedStats = JSON.parse(saved);
+      
+      // Gabungkan dengan statistik default
+      stats = {
+        ...stats,
+        ...savedStats,
+        lastMoves: savedStats.lastMoves || [],
+        winStreak: savedStats.winStreak || 0,
+        maxWinStreak: savedStats.maxWinStreak || 0,
+        aiVsAiGames: savedStats.aiVsAiGames || 0
+      };
+      
+      return true;
+    }
+  } catch (e) {
+    console.error('Gagal memuat skor:', e);
+  }
+  
+  return false;
+}
+
+function exportMemory() {
+  try {
+    const memoryData = {
+      qTable: qTable,
+      stats: stats,
+      timestamp: Date.now(),
+      version: '4.0',
+      description: 'Memori AI Tic-Tac-Toe 4x4 - Enhanced'
+    };
+    
+    const dataStr = JSON.stringify(memoryData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `tic-tac-toe-ai-memory-v4-${new Date().toISOString().slice(0,10)}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    
+    showNotification('success', 'Ekspor Berhasil', 'Memori AI telah diekspor ke file JSON.');
+  } catch (e) {
+    console.error('Gagal mengekspor memori:', e);
+    showNotification('warning', 'Ekspor Gagal', 'Gagal mengekspor memori AI.');
+  }
+}
+
+function importMemory() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  
+  input.onchange = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const memoryData = JSON.parse(e.target.result);
+        
+        // Validasi data
+        if (!memoryData.qTable || !memoryData.stats) {
+          throw new Error('Format file tidak valid');
+        }
+        
+        // Load data
+        qTable = memoryData.qTable;
+        stats = {
+          ...stats,
+          ...memoryData.stats,
+          lastMoves: memoryData.stats.lastMoves || [],
+          winStreak: memoryData.stats.winStreak || 0,
+          maxWinStreak: memoryData.stats.maxWinStreak || 0,
+          qStatesCount: Object.keys(qTable).length,
+          aiVsAiGames: memoryData.stats.aiVsAiGames || 0
+        };
+        
+        // Simpan ke localStorage
+        saveMemory();
+        saveScores();
+        
+        // Update UI
+        updateScores();
+        
+        showNotification('success', 'Impor Berhasil', 'Memori AI telah diimpor dari file.');
+      } catch (error) {
+        showNotification('warning', 'Impor Gagal', 'File tidak valid atau rusak.');
+        console.error('Gagal mengimpor memori:', error);
+      }
+    };
+    
+    reader.readAsText(file);
+  };
+  
+  input.click();
+}
+
+function resetMemory() {
+  if (confirm('Reset memori AI? Semua pembelajaran akan hilang. Tindakan ini tidak dapat dibatalkan.')) {
+    qTable = {};
+    stats = {
+      playerWins: 0,
+      aiWins: 0,
+      draws: 0,
+      aiXWins: 0,
+      aiOWins: 0,
+      totalGames: 0,
+      aiThinkingTime: 0,
+      trainingGames: 0,
+      lastMoves: [],
+      winStreak: 0,
+      maxWinStreak: 0,
+      qStatesCount: 0,
+      aiVsAiGames: 0
+    };
+    
+    // Hapus dari localStorage
+    localStorage.removeItem('ticTacToe4x4_ai_memory_v4');
+    localStorage.removeItem('ticTacToe4x4_ai_memory');
+    localStorage.removeItem('ticTacToe4x4_scores_v4');
+    localStorage.removeItem('ticTacToe4x4_scores');
+    
+    // Update UI
+    updateScores();
+    
+    showNotification('success', 'Reset Berhasil', 'Memori AI telah direset ke default.');
+  }
+}
+
+// ============================================
+// PARTICLE EFFECTS
+// ============================================
+
+class Particle {
+  constructor(x, y, color, type) {
+    this.x = x;
+    this.y = y;
+    this.color = color;
+    this.type = type;
+    this.size = Math.random() * 3 + 1;
+    this.speedX = Math.random() * 3 - 1.5;
+    this.speedY = Math.random() * 3 - 1.5;
+    this.life = 1.0;
+    this.decay = Math.random() * 0.02 + 0.01;
+  }
+  
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.life -= this.decay;
+    return this.life > 0;
+  }
+  
+  draw(ctx) {
+    ctx.save();
+    ctx.globalAlpha = this.life;
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    if (this.type === 'win') {
+      // Bintang untuk kemenangan
+      const spikes = 5;
+      const outerRadius = this.size;
+      const innerRadius = this.size / 2;
+      
+      ctx.translate(this.x, this.y);
+      let rotation = Math.PI / 2 * 3;
+      let x = 0;
+      let y = 0;
+      
+      const step = Math.PI / spikes;
+      
+      ctx.beginPath();
+      ctx.moveTo(0, 0 - outerRadius);
+      
+      for (let i = 0; i < spikes; i++) {
+        x = Math.cos(rotation) * outerRadius;
+        y = Math.sin(rotation) * outerRadius;
+        ctx.lineTo(x, y);
+        rotation += step;
+        
+        x = Math.cos(rotation) * innerRadius;
+        y = Math.sin(rotation) * innerRadius;
+        ctx.lineTo(x, y);
+        rotation += step;
+      }
+      
+      ctx.lineTo(0, 0 - outerRadius);
+      ctx.closePath();
+      ctx.fill();
+    } else {
+      // Lingkaran biasa
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+function createParticles(type) {
+  const colors = type === 'win' 
+    ? ['#FFD700', '#FFCC00', '#FFFF00', '#FF9900'] 
+    : type === 'lose'
+    ? ['#4da6ff', '#0066ff', '#00ffff', '#0099ff']
+    : ['#9b30ff', '#ff4da6', '#ff7f00', '#00cc66'];
+  
+  const boardRect = boardElement.getBoundingClientRect();
+  const centerX = boardRect.left + boardRect.width / 2;
+  const centerY = boardRect.top + boardRect.height / 2;
+  
+  for (let i = 0; i < 50; i++) {
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    particles.push(new Particle(
+      centerX + Math.random() * 200 - 100,
+      centerY + Math.random() * 200 - 100,
+      color,
+      type
+    ));
+  }
+}
+
+function animateParticles() {
+  particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+  
+  // Update dan gambar partikel
+  for (let i = particles.length - 1; i >= 0; i--) {
+    if (!particles[i].update()) {
+      particles.splice(i, 1);
+    } else {
+      particles[i].draw(particleCtx);
+    }
+  }
+  
+  requestAnimationFrame(animateParticles);
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
+
+function init() {
+  // Setup canvas
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+  
+  // Setup board
+  initializeBoard();
+  
+  // Load saved data
+  loadMemory();
+  loadScores();
+  
+  // Update UI
+  updateScores();
+  
+  // Setup parameter sliders
+  document.getElementById('epsilonSlider').value = EPSILON;
+  document.getElementById('learningRateSlider').value = LEARNING_RATE;
+  document.getElementById('discountSlider').value = DISCOUNT;
+  document.getElementById('aggressiveMode').checked = AGGRESSIVE_MODE;
+  document.getElementById('depthThinking').checked = DEEP_THINKING;
+  
+  // Update nilai slider
+  document.getElementById('epsilonValue').textContent = EPSILON.toFixed(2);
+  document.getElementById('learningRateValue').textContent = LEARNING_RATE.toFixed(2);
+  document.getElementById('discountValue').textContent = DISCOUNT.toFixed(2);
+  
+  // Mulai animasi partikel
+  animateParticles();
+  
+  // Auto-save interval
+  setInterval(saveMemory, 30000); // Auto-save setiap 30 detik
+  
+  console.log('Tic-Tac-Toe 4x4 AI Master v4.0 initialized!');
+  console.log('Q-Table size:', Object.keys(qTable).length);
+  console.log('Total games:', stats.totalGames);
+}
+
+// ============================================
+// EVENT LISTENERS
+// ============================================
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (gameScreen.style.display !== 'none') {
+      requestHome();
+    }
+  } else if (e.key === 'r' || e.key === 'R') {
+    if (gameScreen.style.display !== 'none' && !aiMakingMove) {
+      newGame();
+    }
+  } else if (e.key === ' ' && gameMode === 'ai') {
+    toggleAIAutoPlay();
+  }
+});
+
+// Prevent right-click menu on game elements
+document.addEventListener('contextmenu', (e) => {
+  if (e.target.classList.contains('cell') || 
+      e.target.closest('.board-container') ||
+      e.target.closest('.mode-card')) {
+    e.preventDefault();
+  }
+});
+
+// Initialize when page loads
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
