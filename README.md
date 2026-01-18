@@ -10,45 +10,43 @@
 
 **Tic-Tac-Toe AI** adalah implementasi modern dan interaktif dari permainan Tic-Tac-Toe dengan AI yang belajar menggunakan **Q-Learning**, algoritma Reinforcement Learning yang powerful. Dibangun sebagai aplikasi web single-page dengan UI futuristik dan visualisasi real-time, proyek ini dirancang untuk edukasi, eksperimen, dan demonstrasi konsep Machine Learning yang accessible langsung di browser.
 
-*Bayangkan: AI yang belajar dari bermain, menyimpan memori strategi, dan bisa di-training sampai level "unbeatable" — semua berjalan di browser Anda!* 🚀
-
-[Demo Live](#) • [Dokumentasi](#-cara-penggunaan) • [Kontribusi](#-kontribusi) • [Lisensi](#-license)
+*Bayangkan: AI yang belajar dari bermain, menyimpan memori strategi, dan bisa di-training sampai level "unbeatable" — semua berjalan di browser Anda!*
 
 </div>
 
 ---
 
-## ✨ Kenapa Tic-Tac-Toe AI?
+## Kenapa Tic-Tac-Toe AI?
 
 Proyek ini bukan sekadar permainan Tic-Tac-Toe biasa. Ini adalah **laboratorium RL mini** yang bisa Anda jalankan langsung di browser:
 
-- 🧠 **AI yang benar-benar belajar** dari interaksi dengan Anda
-- 📊 **Visualisasi real-time** dari proses pembelajaran Q-Learning
-- 🎨 **UI futuristik** dengan efek partikel, animasi, dan glassmorphism
-- 💾 **Ekspor/Impor memori AI** — simpan dan bagikan pengetahuan AI
-- ⚙️ **Parameter live tuning** — eksperimen dengan epsilon, learning rate, gamma langsung saat bermain
+- **AI yang benar-benar belajar** dari interaksi dengan Anda
+- **Visualisasi real-time** dari proses pembelajaran Q-Learning
+- **UI futuristik** dengan efek partikel, animasi, dan glassmorphism
+- **Ekspor/Impor memori AI** — simpan dan bagikan pengetahuan AI
+- **Parameter live tuning** — eksperimen dengan epsilon, learning rate, gamma langsung saat bermain
 
 ---
 
-## 🚀 Fitur Utama
+## Fitur Utama
 
-### 🧠 AI dengan Q-Learning
+### AI dengan Q-Learning
 
-- ✅ Algoritma Q-Learning dengan tabel Q yang disimpan di localStorage
-- ✅ Dual-mode strategi: eksplorasi acak vs eksploitasi pengetahuan
-- ✅ One-step lookahead untuk kemenangan/blokir langsung
-- ✅ Training batch (1k, 5k, 50k games) dengan progress bar visual
-- ✅ Decaying epsilon selama training untuk transisi eksplorasi→eksploitasi
+- Algoritma Q-Learning dengan tabel Q yang disimpan di localStorage
+- Dual-mode strategi: eksplorasi acak vs eksploitasi pengetahuan
+- One-step lookahead untuk kemenangan/blokir langsung
+- Training batch (1k, 5k, 50k games) dengan progress bar visual
+- Decaying epsilon selama training untuk transisi eksplorasi→eksploitasi
 
-### 🎮 Gameplay Interaktif
+### Gameplay Interaktif
 
-- ✅ Tampilan board responsif dengan animasi halus
-- ✅ Highlight sel menang dengan efek glow dinamis
-- ✅ Partikel celebration saat AI menang
-- ✅ Score tracking persistent di localStorage
-- ✅ Turn indicator yang jelas
+- Tampilan board responsif dengan animasi halus
+- Highlight sel menang dengan efek glow dinamis
+- Partikel celebration saat AI menang
+- Score tracking persistent di localStorage
+- Turn indicator yang jelas
 
-### ⚙️ Kontrol Eksperimen Lengkap
+### Kontrol Eksperimen Lengkap
 
 **Parameter real-time adjustment:**
 - **Epsilon (0-0.5):** kontrol randomness AI
@@ -61,17 +59,17 @@ Proyek ini bukan sekadar permainan Tic-Tac-Toe biasa. Ini adalah **laboratorium 
 **Memory management:**
 - Ekspor/impor tabel Q, reset memori
 
-### 🔒 Fitur Teknis Modern
+### Fitur Teknis Modern
 
-- ✅ Single HTML file — tidak butuh instalasi, langsung buka di browser
-- ✅ LocalStorage persistence — skor dan memori AI tetap ada
-- ✅ Responsive design — optimal di desktop & mobile
-- ✅ Keyboard shortcuts (R untuk restart)
-- ✅ ARIA labels untuk accessibility
+- Single HTML file — tidak butuh instalasi, langsung buka di browser
+- LocalStorage persistence — skor dan memori AI tetap ada
+- Responsive design — optimal di desktop & mobile
+- Keyboard shortcuts (R untuk restart)
+- ARIA labels untuk accessibility
 
 ---
 
-## 🎨 UI & Experience
+## UI & Experience
 
 ### Game Board dengan Efek Visual
 
@@ -92,7 +90,7 @@ Proyek ini bukan sekadar permainan Tic-Tac-Toe biasa. Ini adalah **laboratorium 
 
 ---
 
-## 🧪 Teknologi di Balik Layar
+## Teknologi di Balik Layar
 
 ### Arsitektur Q-Learning System
 
@@ -132,7 +130,7 @@ graph TB
 
 ---
 
-## 🎯 Cara Mulai Cepat
+## Cara Mulai Cepat
 
 ### Opsi 1: Langsung di Browser
 
@@ -167,7 +165,7 @@ xdg-open tictac.html # Linux
 
 ---
 
-## 🕹️ Cara Penggunaan
+## Cara Penggunaan
 
 ### Bermain vs AI
 
@@ -199,7 +197,7 @@ Discount: 0.90      // Balance present-future
 
 ---
 
-## 📊 Metrik & Performa
+## Metrik & Performa
 
 | Metrik | Value | Keterangan |
 |--------|-------|------------|
@@ -222,7 +220,7 @@ Discount: 0.90      // Balance present-future
 
 ---
 
-## 🔬 Deep Dive: Q-Learning Implementation
+## Deep Dive: Q-Learning Implementation
 
 ### State Representation
 
@@ -262,7 +260,7 @@ const newQ = currentQ + (LEARNING_RATE * (target - currentQ));
 
 ---
 
-## 🛠️ Development & Customization
+## Development & Customization
 
 ### Struktur File
 
@@ -317,7 +315,7 @@ socket.onmessage = (event) => {
 
 ---
 
-## 📈 Roadmap & Future Enhancements
+## Roadmap & Future Enhancements
 
 ### [Planned]
 
@@ -335,14 +333,14 @@ socket.onmessage = (event) => {
 
 ### [Completed]
 
-- [x] Q-Learning implementation ✅
-- [x] Parameter tuning interface ✅
-- [x] Visual feedback system ✅
-- [x] LocalStorage persistence ✅
+- [x] Q-Learning implementation
+- [x] Parameter tuning interface
+- [x] Visual feedback system
+- [x] LocalStorage persistence
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
@@ -366,7 +364,7 @@ window.debugAIMove = () => makeAIMove();
 
 ---
 
-## 🤝 Kontribusi
+## Kontribusi
 
 Kontribusi sangat diterima! Berikut area yang bisa dikontribusikan:
 
@@ -393,7 +391,7 @@ git push origin feat/advanced-analytics
 
 ---
 
-## 📚 Resources & Learning
+## Resources & Learning
 
 ### Belajar Q-Learning
 
@@ -409,7 +407,7 @@ git push origin feat/advanced-analytics
 
 ---
 
-## 📄 License
+## License
 
 MIT License — bebas digunakan, dimodifikasi, dan didistribusikan untuk keperluan pribadi maupun komersial.
 
@@ -437,7 +435,7 @@ SOFTWARE.
 
 ---
 
-## 🌟 Acknowledgments
+## Acknowledgments
 
 - **Icons8** untuk icon set berkualitas
 - **Komunitas RL** untuk inspirasi algoritma
@@ -462,7 +460,7 @@ SOFTWARE.
 
 <br>
 
-**💡 Pro Tips:**
+**Pro Tips:**
 
 Train AI minimal 50k games untuk performa optimal | Eksperimen dengan parameter berbeda | Export Q-table berharga Anda sebagai backup | Gunakan mode training untuk mengajarkan strategi khusus
 
