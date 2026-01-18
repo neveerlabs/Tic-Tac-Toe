@@ -447,7 +447,7 @@ SOFTWARE.
 
 ### **Tic-Tac-Toe AI** — *di mana game klasik bertemu AI modern*
 
-*Setiap klik adalah pelajaran, setiap game adalah evolusi* 🎮
+*Setiap klik adalah pelajaran, setiap game adalah evolusi*
 
 <br>
 
@@ -466,7 +466,7 @@ Train AI minimal 50k games untuk performa optimal | Eksperimen dengan parameter 
 
 <br>
 
-**Happy Learning, Playing, and Teaching Your AI!** 🚀
+**Happy Learning, Playing, and Teaching Your AI!**
 
 ---
 
