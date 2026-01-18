@@ -1,4 +1,4 @@
-# 🎮 Tic-Tac-Toe AI — Q-Learning Reinforcement Learning
+# Tic-Tac-Toe AI — Q-Learning Reinforcement Learning
 
 <div align="center">
 
@@ -54,7 +54,7 @@ Proyek ini bukan sekadar permainan Tic-Tac-Toe biasa. Ini adalah **laboratorium 
 - **Discount Factor (0.5-0.99):** nilai future reward
 
 **Training controls:**
-- +1k, +5k, +50k games dengan satu klik
+- +1000, +5000, +50000 games dengan satu klik
 
 **Memory management:**
 - Ekspor/impor tabel Q, reset memori
@@ -136,7 +136,7 @@ graph TB
 
 ```bash
 # Download file dan buka di browser
-curl -O https://raw.githubusercontent.com/neveerlabs/tictactoe-ai/main/tictac.html
+curl -O https://raw.githubusercontent.com/neveerlabs/Tic-Tac-Toe/tictac.html
 
 # Atau klik dua kali file HTML untuk membuka di browser default
 ```
@@ -154,8 +154,8 @@ python3 -m http.server 8080
 
 ```bash
 # Clone repository
-git clone https://github.com/neveerlabs/tictactoe-ai.git
-cd tictactoe-ai
+git clone https://github.com/neveerlabs/Tic-Tac-Toe.git
+cd Tic-Tac-Toe
 
 # Buka file HTML
 open tictac.html  # macOS
@@ -377,7 +377,7 @@ Kontribusi sangat diterima! Berikut area yang bisa dikontribusikan:
 
 ```bash
 # Clone repository
-git clone https://github.com/neveerlabs/tictactoe-ai.git
+git clone https://github.com/neveerlabs/Tic-Tac-Toe.git
 
 # Buat branch baru
 git checkout -b feat/advanced-analytics
@@ -470,6 +470,6 @@ Train AI minimal 50k games untuk performa optimal | Eksperimen dengan parameter 
 
 ---
 
-<sub>Made with ❤️ by Neverlabs | © 2026 All rights reserved</sub>
+<sub>Made with by Neverlabs | © 2026 All rights reserved</sub>
 
 </div>
