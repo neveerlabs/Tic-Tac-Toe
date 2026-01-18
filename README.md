@@ -5,7 +5,7 @@ Tic-Tac-Toe AI adalah implementasi modern dan interaktif dari permainan Tic-Tac-
 Bayangkan: AI yang belajar dari bermain, menyimpan memori strategi, dan bisa di-training sampai level "unbeatable" — semua berjalan di browser Anda.
 
 <p align="center"> <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" /> <img src="https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" /> <img src="https://img.shields.io/badge/Q--Learning-Reinforcement%20Learning-9D72FF?style=for-the-badge" /> <img src="https://img.shields.io/badge/UI-Glassmorphism-00D4AA?style=for-the-badge" /> <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" /> </p><p align="center"> <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2d5em03ZzM5enNhc2oxaDZ4eG1mZ2wxY3p6b2V0YjZwa2V1bCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26tn33aiTi1jkl6H6/giphy.gif" alt="Tic-Tac-Toe AI Demo" width="720" /> </p>
-✨ Kenapa Tic-Tac-Toe AI?
+## ✨ Kenapa Tic-Tac-Toe AI?
 Proyek ini bukan sekadar permainan Tic-Tac-Toe biasa. Ini adalah laboratorium RL mini yang bisa Anda jalankan langsung di browser:
 
 AI yang benar-benar belajar dari interaksi dengan Anda
