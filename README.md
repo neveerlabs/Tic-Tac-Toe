@@ -136,7 +136,7 @@ graph TB
 
 ```bash
 # Download file dan buka di browser
-curl -O https://raw.githubusercontent.com/neveerlabs/Tic-Tac-Toe/tictac.html
+curl -O https://raw.githubusercontent.com/neveerlabs/Tic-Tac-Toe/tic_tac_toe.html
 
 # Atau klik dua kali file HTML untuk membuka di browser default
 ```
@@ -147,7 +147,7 @@ curl -O https://raw.githubusercontent.com/neveerlabs/Tic-Tac-Toe/tictac.html
 # Gunakan Python simple server
 python3 -m http.server 8080
 
-# Buka http://localhost:8080/tictac.html di browser
+# Buka http://localhost:8080/tic_tac_toe.html di browser
 ```
 
 ### Opsi 3: Clone Repository
@@ -158,9 +158,9 @@ git clone https://github.com/neveerlabs/Tic-Tac-Toe.git
 cd Tic-Tac-Toe
 
 # Buka file HTML
-open tictac.html  # macOS
-start tictac.html # Windows
-xdg-open tictac.html # Linux
+open tic_tac_toe.html  # macOS
+start tic_tac_toe.html # Windows
+xdg-open tic_tac_toe.html # Linux
 ```
 
 ---
@@ -265,7 +265,7 @@ const newQ = currentQ + (LEARNING_RATE * (target - currentQ));
 ### Struktur File
 
 ```
-tictac.html
+tic_tac_toe.html
 ├── <head>
 │   ├── Meta tags & viewport
 │   ├── CSS dengan custom properties
