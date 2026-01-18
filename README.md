@@ -1,4 +1,5 @@
-Tic-Tac-Toe AI — Q-Learning Reinforcement Learning
+##Tic-Tac-Toe AI — Q-Learning Reinforcement Learning
+
 Tic-Tac-Toe AI adalah implementasi modern dan interaktif dari permainan Tic-Tac-Toe dengan AI yang belajar menggunakan Q-Learning, algoritma Reinforcement Learning yang kuat. Dibangun sebagai aplikasi web single-page dengan UI futuristik dan visualisasi real-time, proyek ini dirancang untuk edukasi, eksperimen, dan demonstrasi konsep Machine Learning yang accessible langsung di browser.
 
 Bayangkan: AI yang belajar dari bermain, menyimpan memori strategi, dan bisa di-training sampai level "unbeatable" — semua berjalan di browser Anda.
