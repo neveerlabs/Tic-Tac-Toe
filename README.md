@@ -12,20 +12,20 @@ Proyek ini dirancang sebagai laboratorium Reinforcement Learning mini yang berja
 
 ---
 
-## ✨ Fitur Utama
+## Fitur Utama
 
-- 🧠 **Q-Learning AI** dengan fallback heuristik (`WIN → BLOCK → FORK → Q-LEARNING`)
-- 💾 **IndexedDB Storage** untuk Q-Table & skor (mendukung ribuan state tanpa lag)
-- 🎛️ **Real-time Hyperparameter Tuning** (ε, α, γ) via slider interaktif
-- 📈 **Batch Training** (1k, 5k, 50k games) dengan epsilon decay opsional & progress bar
-- 📤 **Export / Import Q-Table** (format JSON) untuk backup atau sharing memori AI
-- 🎨 **Glassmorphism UI** dengan animasi halus, particle celebration, & modal overlay
-- 📱 **Fully Responsive** + orientation-aware layout (mobile portrait/landscape optimized)
-- 🔒 **Privacy-First**: Semua data tersimpan lokal, tidak ada pelacakan atau server eksternal
+- **Q-Learning AI** dengan fallback heuristik (`WIN → BLOCK → FORK → Q-LEARNING`)
+- **IndexedDB Storage** untuk Q-Table & skor (mendukung ribuan state tanpa lag)
+- **Real-time Hyperparameter Tuning** (ε, α, γ) via slider interaktif
+- **Batch Training** (1k, 5k, 50k games) dengan epsilon decay opsional & progress bar
+- **Export / Import Q-Table** (format JSON) untuk backup atau sharing memori AI
+- **Glassmorphism UI** dengan animasi halus, particle celebration, & modal overlay
+- **Fully Responsive** + orientation-aware layout (mobile portrait/landscape optimized)
+- **Privacy-First**: Semua data tersimpan lokal, tidak ada pelacakan atau server eksternal
 
 ---
 
-## 🧠 Cara Kerja AI
+## Cara Kerja AI
 
 ### State Representation
 Papan 3×3 direpresentasikan sebagai string 9 karakter:
@@ -60,7 +60,7 @@ AI tidak murni mengandalkan Q-Table. Setiap giliran, AI mengecek:
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Komponen       | Teknologi                          |
 |----------------|------------------------------------|
@@ -73,7 +73,7 @@ AI tidak murni mengandalkan Q-Table. Setiap giliran, AI mengecek:
 
 ---
 
-## 📁 Struktur Proyek
+## Struktur Proyek
 
 ```
 Tic-Tac-Toe-AI/
@@ -85,7 +85,7 @@ Tic-Tac-Toe-AI/
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Opsi 1: Jalankan Langsung
 ```bash
@@ -105,7 +105,7 @@ npx serve .
 
 ---
 
-## 🎮 Cara Penggunaan
+## Cara Penggunaan
 
 1. **Main vs AI**  
    Klik sel kosong untuk menempatkan `X`. AI (`O`) akan merespons dalam ~150ms.  
@@ -128,7 +128,7 @@ npx serve .
 
 ---
 
-## 📊 Performa & Metrik
+## Performa & Metrik
 
 | Metrik            | Nilai               | Keterangan                          |
 |-------------------|---------------------|-------------------------------------|
@@ -140,7 +140,7 @@ npx serve .
 
 ---
 
-## 🔧 Kustomisasi & Ekstensi
+## Kustomisasi & Ekstensi
 
 ### Menambah Algoritma Lain
 Ganti `qTable` dengan neural network menggunakan TensorFlow.js:
@@ -161,7 +161,7 @@ const model = tf.sequential({
 
 ---
 
-## 📜 License
+## License
 
 MIT License — bebas digunakan, dimodifikasi, dan didistribusikan.
 
@@ -172,16 +172,16 @@ Copyright 2026 Neverlabs
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 - **Icons8** untuk aset ikon UI
 - **Sutton & Barto** untuk referensi *Reinforcement Learning: An Introduction*
 - Komunitas ML/RL open-source atas inspirasi arsitektur & optimasi
 
-> 💡 **Pro Tips:**  
+> **Pro Tips:**  
 > Train minimal `50k` episode untuk performa stabil | Eksperimen dengan `ε decay` untuk konvergensi lebih cepat | Selalu `EXPORT Q` sebelum reset memori | Gunakan `γ ≥ 0.90` jika ingin AI lebih foresighted
 
 **Happy Learning, Playing, and Teaching Your AI!**  
-`Made with 🤖 by Neverlabs | © 2026`
+`Made with by Neverlabs | © 2026`
 
 [![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/628561765372)
 [![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/neveerlabs)
