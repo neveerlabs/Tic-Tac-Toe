@@ -76,7 +76,7 @@ AI tidak murni mengandalkan Q-Table. Setiap giliran, AI mengecek:
 ## Struktur Proyek
 
 ```
-Tic-Tac-Toe-AI/
+Tic-Tac-Toe/
 ├── index.html      # Struktur UI, modal, kontrol, canvas
 ├── styles.css      # Glassmorphism, responsive layout, animasi
 ├── script.js       # Game logic, Q-Learning, IndexedDB, training loop
@@ -89,7 +89,7 @@ Tic-Tac-Toe-AI/
 
 ### Opsi 1: Jalankan Langsung
 ```bash
-cd Tic-Tac-Toe-AI
+cd Tic-Tac-Toe
 open index.html        # macOS
 start index.html       # Windows
 xdg-open index.html    # Linux
